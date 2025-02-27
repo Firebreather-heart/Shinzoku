@@ -27,60 +27,62 @@ const AnimatedHeartLogo = () => {
     });
 
     // Blood Drip Animation with gold transformation
-    const bloodDrops = Array.from(bloodDropsRef.current.children);
-    
-    // Initialize gold pool
-    gsap.set(goldPoolRef.current, { 
-      scaleX: 0.8, 
-      scaleY: 0.3, 
-      opacity: 0.8 
-    });
-    
-    bloodDrops.forEach((drop, index) => {
-      // Initial state
-      gsap.set(drop, { scaleY: 0.3, opacity: 0 });
+    if (bloodDropsRef.current) {
+      const bloodDrops = Array.from(bloodDropsRef.current.children);
       
-      // Create timeline for each drop
-      const tl = gsap.timeline({ repeat: -1, delay: index * 0.7 });
-      tl.to(drop, { opacity: 1, duration: 0.3 })
-        .to(drop, { 
-          scaleY: 1.5, 
-          duration: 1.2, 
-          ease: "sine.in" 
-        })
-        .to(drop, { 
-          y: 30, 
-          opacity: 0, 
-          duration: 0.5,
-          ease: "power1.in" 
-        }, "-=0.3")
-        .to(drop, { 
-          y: 0, 
-          scaleY: 0.3, 
-          duration: 0 
-        })
-        // Gold pool grows with each drop
-        .to(goldPoolRef.current, {
-          scaleX: "+=0.05",
-          scaleY: "+=0.05",
-          duration: 0.3,
-          ease: "bounce.out"
-        }, "-=0.5")
-        .to(goldPoolRef.current, {
-          scaleX: "-=0.02",
-          scaleY: "-=0.02",
-          duration: 0.2
-        });
-    });
-    
-    // Continuous subtle gold shimmer
-    gsap.to(goldPoolRef.current, {
-      filter: "brightness(1.2)",
-      repeat: -1,
-      yoyo: true,
-      duration: 1.5,
-      ease: "sine.inOut"
-    });
+      // Initialize gold pool
+      gsap.set(goldPoolRef.current, { 
+        scaleX: 0.7, 
+        scaleY: 0.2, 
+        opacity: 0.8 
+      });
+      
+      bloodDrops.forEach((drop, index) => {
+        // Initial state
+        gsap.set(drop, { scaleY: 0.3, opacity: 0 });
+        
+        // Create timeline for each drop
+        const tl = gsap.timeline({ repeat: -1, delay: index * 0.7 });
+        tl.to(drop, { opacity: 1, duration: 0.3 })
+          .to(drop, { 
+            scaleY: 1.5, 
+            duration: 1.2, 
+            ease: "sine.in" 
+          })
+          .to(drop, { 
+            y: 30, 
+            opacity: 0, 
+            duration: 0.5,
+            ease: "power1.in" 
+          }, "-=0.3")
+          .to(drop, { 
+            y: 0, 
+            scaleY: 0.3, 
+            duration: 0 
+          })
+          // Gold pool grows with each drop
+          .to(goldPoolRef.current, {
+            scaleX: "+=0.05",
+            scaleY: "+=0.05",
+            duration: 0.3,
+            ease: "bounce.out"
+          }, "-=0.5")
+          .to(goldPoolRef.current, {
+            scaleX: "-=0.02",
+            scaleY: "-=0.02",
+            duration: 0.2
+          });
+      });
+      
+      // Continuous subtle gold shimmer
+      gsap.to(goldPoolRef.current, {
+        filter: "brightness(1.2)",
+        repeat: -1,
+        yoyo: true,
+        duration: 1.5,
+        ease: "sine.inOut"
+      });
+    }
   }, []);
 
   return (
