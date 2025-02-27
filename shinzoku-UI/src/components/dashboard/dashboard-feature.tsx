@@ -4,24 +4,57 @@ import { useState, useEffect, useRef } from "react";
 import AnimatedHeartLogo from "@/components/AnimatedLogo";
 import { WalletButton } from "../solana/solana-provider";
 
+const playlist = [
+  "/audio/spinandburst.mp3",
+]
+
 export default function DashboardFeature() {
   const [started, setStarted] = useState(false);
   const [audioReady, setAudioReady] = useState(false);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    const audio = new Audio("/audio/spinandburst.mp3");
-    audio.loop = true;
+    const audio = new Audio(playlist[0]);
+    audio.loop = false;
     audio.volume = 0.5;
     audio.preload = "auto";
+
     audio.addEventListener("canplaythrough", () => {
-      setAudioReady(true);
+    setAudioReady(true);
     });
+    
+    const playNextTrack = () => { 
+      const nextIndex = (currentTrackIndex + 1) % playlist.length;
+      setCurrentTrackIndex(nextIndex);
+      audio.src = playlist[nextIndex];
+      audio.play().catch((err) => console.error("Audio playback failed:", err));
+    }
+
+    audio.addEventListener("ended", playNextTrack);
+    
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        audio.pause();
+      } else  {
+        audio.play().catch(err => console.error("Audio playback failed:", err));
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     audio.addEventListener("error", (e) => {
       console.error("Audio failed to load:", e);
       setAudioReady(true);
     });
     audioRef.current = audio;
+
+    return () => {
+      audio.removeEventListener("ended", playNextTrack);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      audio.pause();
+    };
   }, []);
 
   const handleStart = () => {
