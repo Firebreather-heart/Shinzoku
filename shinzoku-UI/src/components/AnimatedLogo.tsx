@@ -2,10 +2,10 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
 const AnimatedHeartLogo = () => {
-  const heartRef = useRef(null);
-  const spearsRef = useRef(null);
-  const bloodDropsRef = useRef(null);
-  const goldPoolRef = useRef(null);
+  const heartRef = useRef<HTMLDivElement>(null);
+  const spearsRef = useRef<HTMLDivElement>(null);
+  const bloodDropsRef = useRef<HTMLDivElement>(null);
+  const goldPoolRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Pulsing Heart Animation
@@ -27,8 +27,8 @@ const AnimatedHeartLogo = () => {
     });
 
     // Blood Drip Animation with gold transformation
-    if (bloodDropsRef.current) {
-      const bloodDrops = Array.from(bloodDropsRef.current.children);
+    if (bloodDropsRef.current && goldPoolRef.current) {
+      const bloodDrops = Array.from(bloodDropsRef.current.children as HTMLCollectionOf<HTMLElement>);
       
       // Initialize gold pool
       gsap.set(goldPoolRef.current, { 
