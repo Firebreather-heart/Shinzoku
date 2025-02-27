@@ -4,6 +4,15 @@ import AnimatedHeartLogo from "@/components/AnimatedLogo"
 import { WalletButton } from "../solana/solana-provider"
 
 export default function DashboardFeature() {
+
+  const handleWalletClick = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) =>
+        console.error("Fullscreen request failed:", err)
+      )
+    }
+  }
+
   return (
     <div className="flex flex-col justify-center items-center h-screen gap-6 bg-black">
         
@@ -12,9 +21,9 @@ export default function DashboardFeature() {
       </h1>
       
       <AnimatedHeartLogo />
-
-      <WalletButton />
-
+      <div onClick={handleWalletClick}>
+        <WalletButton />
+      </div>
  
     </div>
   )
