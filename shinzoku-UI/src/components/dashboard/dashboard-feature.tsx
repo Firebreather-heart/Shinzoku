@@ -1,21 +1,21 @@
 'use client'
 
 import AnimatedHeartLogo from "@/components/AnimatedLogo"
-
-const links: { label: string; href: string }[] = [
-  { label: 'Solana Docs', href: 'https://docs.solana.com/' },
-  { label: 'Solana Faucet', href: 'https://faucet.solana.com/' },
-  { label: 'Solana Cookbook', href: 'https://solanacookbook.com/' },
-  { label: 'Solana Stack Overflow', href: 'https://solana.stackexchange.com/' },
-  { label: 'Solana Developers GitHub', href: 'https://github.com/solana-developers/' },
-]
+import { WalletButton } from "../solana/solana-provider"
 
 export default function DashboardFeature() {
   return (
-    <div>
-      <div className="flex justify-center items-center h-screen">
-        <AnimatedHeartLogo />
-      </div>
+    <div className="flex flex-col justify-center items-center h-screen gap-6 bg-black">
+        
+      <h1 className="text-5xl font-bold text-red-500 animate-pulse">
+        Shinzoku
+      </h1>
+      
+      <AnimatedHeartLogo />
+
+      <WalletButton />
+
+ 
     </div>
   )
 }
