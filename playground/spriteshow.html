@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Game Character - Your Images</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+                background-color: #111;
+                font-family: Arial, sans-serif;
+            }
+
+            h1 {
+                position: absolute;
+                top: 20px;
+                width: 100%;
+                text-align: center;
+                color: #f8f8f8;
+                text-shadow: 0 0 10px rgba(255, 100, 100, 0.5);
+                z-index: 100;
+            }
+
+            #canvas-container {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 500px;
+            box-shadow: 0 0 20px rgba(255,0,0,0.3);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+    </style>
+    </head>
+    
+    <body>
+        <h1>Your Character</h1>
+        <div id="canvas-container"></div>
+    
+        <script>
+            // Basic Three.js setup
+            const container = document.getElementById('canvas-container');
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x111111);
+
+            const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            container.appendChild(renderer.domElement);
+
+            // Add light
+            const light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(0, 0, 1);
+            scene.add(light);
+
+            // Camera position
+            camera.position.z = 5;
+
+            // *** ADD YOUR CHARACTER IMAGES HERE ***
+            // Array of paths to your character images
+            const characterImages = [
+                    "lucy1.webp",
+                    "lucy2.webp",
+                    "lucy3.webp",
+                    "lucy4.webp",
+                    "lucy5.webp",
+                ];
+
+                // Create materials for each image
+                const materials = [];
+                const textureLoader = new THREE.TextureLoader();
+
+                characterImages.forEach(imagePath => {
+                    const texture = textureLoader.load(imagePath);
+                    const material = new THREE.MeshBasicMaterial({
+                        map: texture,
+                        transparent: true,
+                    });
+                    materials.push(material);
+                });
+
+                // Create a plane for the character
+                const geometry = new THREE.PlaneGeometry(3, 5);
+                const character = new THREE.Mesh(geometry, materials[0]);
+                scene.add(character);
+
+                // Animation variables
+                let currentFrame = 0;
+                let lastFrameTime = 0;
+                const frameDuration = 200; // Time per frame in ms
+
+                // Animation loop
+                        function animate(timestamp) {
+                                requestAnimationFrame(animate);
+
+                                // Update frame
+                                if (!lastFrameTime) lastFrameTime = timestamp;
+
+                                if (timestamp - lastFrameTime > frameDuration) {
+                                    // Change to next frame
+                                    currentFrame = (currentFrame + 1) % materials.length;
+                                    character.material = materials[currentFrame];
+
+                                    // Add subtle floating effect
+                                    character.position.y = Math.sin(timestamp * 0.001) * 0.2;
+
+                                    lastFrameTime = timestamp;
+                                }
+
+                                // Render scene
+                                renderer.render(scene, camera);
+                            }
+
+                            animate();
+                        </script>
+    </body>
+    
+    </html>
