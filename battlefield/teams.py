@@ -10,6 +10,7 @@ class Team:
     def _populate_team(self, characters:List[Character]):
         self.characters = characters
         self.rating = sum(i.rank for i in characters)
+        self.size = len(characters)
 
     def assemble(self, characters:list):
         self._populate_team(characters)
@@ -19,3 +20,7 @@ class Team:
     
     def __iter__(self):
         return iter(self.characters)
+    
+    def shuffle(self):
+        import random
+        random.shuffle(self.characters)

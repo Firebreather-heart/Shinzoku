@@ -17,9 +17,10 @@ class Attribute(object):
 
 
 class SpecialAbility:
-    def __init__(self, name, value):
+    def __init__(self, name, value, mp_cost):
         self.name = name
         self.value = value
+        self.mp_cost = mp_cost
         self.description = self.get_description(name)
 
     def get_description(self, name):
@@ -66,7 +67,7 @@ class Character(object):
             'attributes': [attribute.__dict__ for attribute in self.attributes],
             'special_abilities': [special_ability.__dict__ for special_ability in self.special_abilities]
         }
-    
+
     def describe(self):
         print(f'Name: {self.name}')
         print(f'Class: {self.character_class}')
@@ -75,17 +76,19 @@ class Character(object):
             print(f'{attribute.name}: {attribute.value}')
         print('Special Abilities:')
         for special_ability in self.special_abilities:
-            print(f'{special_ability.name}: {special_ability.description} - {special_ability.value}')
+            print(
+                f'{special_ability.name}: {special_ability.description} - {special_ability.value}')
 
-    def modify_attribute(self, attr_name:str, value:int):
+    def modify_attribute(self, attr_name: str, value: int):
         try:
-            attribute = next(attr for attr in self.attributes if attr.name == attr_name)
+            attribute = next(
+                attr for attr in self.attributes if attr.name == attr_name)
             attribute.value += value
             setattr(self, attribute.name, attribute.value)
         except StopIteration:
             raise ValueError(f'No attribute with name {attr_name} found')
-        
-    def get_attribute(self, attr_name:str):
+
+    def get_attribute(self, attr_name: str):
         try:
             return next(attr.value for attr in self.attributes if attr.name == attr_name)
         except StopIteration:
@@ -110,14 +113,14 @@ class Character(object):
         character = cls(name, attributes, character_class)
         for special_ability in data['special_abilities']:
             character._add_special_ability(SpecialAbility(
-                special_ability['name'], special_ability['value']))
+                special_ability['name'], special_ability['value'], special_ability['mp_cost']))
         return character
-    
+
     def battle_rank(self):
         if self.rank <= 4000:
             return 'E'
         elif self.rank > 4000 and self.rank <= 6000:
-            return 'D' 
+            return 'D'
         elif self.rank > 6000 and self.rank <= 8000:
             return 'C'
         elif self.rank > 8000 and self.rank <= 10000:

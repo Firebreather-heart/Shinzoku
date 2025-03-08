@@ -1,13 +1,25 @@
+import random
+
 from teams import Team 
 from characters import Character, Attribute
 
 
 class AutoBattleField:
-    def __init__(self, team1:Team, team2:Team):
+    def __init__(self, team1:Team, team2:Team, moves_per_turn:int=3):
         """This battlefield only allows two players"""
         self.team1 =  team1
         self.team2 = team2 
-        self._turn_state_marker = team1.name
+        self._turn_state_marker = team1
+        self.moves_per_turn = moves_per_turn
+        self.turn_count = 0
+        self.commentary = []
+
+    
+    def log(self, message:str, dest:str='console'):
+        """Log a message to the commentary"""
+        self.commentary.append(message)
+        if dest == 'console':
+            print(message)
 
 
     def get_player(self, team:Team, name:str):
@@ -19,22 +31,64 @@ class AutoBattleField:
 
     def next_turn(self):
         """Change the turn state marker"""
-        if self._turn_state_marker == self.team1.name:
-            self._turn_state_marker = self.team2.name
+        if self._turn_state_marker == self.team1:
+            self._turn_state_marker = self.team2
         else:
-            self._turn_state_marker = self.team1.name
+            self._turn_state_marker = self.team1
+        self.turn_count += 1
     
     def active_team(self):
         """Get the active team"""
-        return self.team1 if self._turn_state_marker == self.team1.name else self.team2
+        return self._turn_state_marker
+    
+    def inactive_team(self):
+        """Get the inactive team"""
+        return self.team2 if self._turn_state_marker == self.team1.name else self.team1
 
-    def update_character_state(self, team:Team , player:Character, attribute:Attribute, value:int):
-        player = self.get_player(team, player.name)
-        player.modify_attribute(attribute.name, value)
+    def attack(self, attacker:Character, target:Character):
+        #calculate the damage
+        damage = attacker.get_attribute('dmg')
+        target_hp = target.get_attribute('hp')
+        target_armor = target.get_attribute('armor')
+        hp_damage, armor_damage = self.calculate_hp_armor_damage(target_armor, damage)
+
+        attacker_speed = self.effective_speed(attacker)
+        target_speed = self.effective_speed(target)
+        
+        #compensate for player speed
+        hp_damage = hp_damage * (attacker_speed / target_speed)
+
+        #reduce stamina and speed accordingly for both
+        attacker.modify_attribute('stamina', -4)
+        target.modify_attribute('stamina', -4)
+        target.modify_attribute('hp', -hp_damage)
+        target.modify_attribute('armor', -armor_damage)
+        self.check_player_status(target)
+        return hp_damage, armor_damage
+
+    def effective_speed(self, character: Character, max_stamina: int = 100) -> float:
+        base_speed = character.get_attribute('speed')
+        stamina = character.get_attribute('stamina')
+        return base_speed * (stamina / max_stamina)
+
+    def calculate_hp_armor_damage(self, armor, damage):
+        """returns the actual damage and the armor left after the attack"""
+        actual_dmg = damage * 100 / (100 + armor)
+        armor_dmg = (1 - actual_dmg/damage) * armor
+        return actual_dmg, armor_dmg
+
 
     def initiate_player_action(self, player:Character):
-        #first pick an opponent at random
-        pass
+        opponent = self.pick_opponent()
+        # Player attacks opponent
+        # if turn number is a multiple of 3 use special ability instead of a normal attack
+        if self.turn_count % 3 == 0:
+            pass 
+        else:
+            dmg, armor =self.attack(player, opponent)
+            comment = f'{player.name} attacks {opponent.name}, dealing {dmg} damage, {opponent.name} has {opponent.get_attribute("hp")} hp , {opponent.get_attribute("armor")} armor ,{opponent.get_attribute("armor")} left'
+            self.log(comment, dest='console')
+
 
     def pick_opponent(self,):
         """Choose an opponent based on a simple vulnerability score."""
@@ -49,3 +103,53 @@ class AutoBattleField:
         opponents = opponent_team.characters
         target = max(opponents, key=vulnerability)
         return target
+    
+    def check_player_status(self, player:Character):
+        """Check if the player is still alive"""
+        if player.get_attribute('hp') <= 0:
+            self.log(f'{player.name} has been killed', dest='console')
+            if player in self.team1.characters:
+                self.team1.characters.remove(player)
+            elif player in self.team2.characters:
+                self.team2.characters.remove(player)
+
+    def check_team_status(self, team:Team):
+        """Check if the team has been defeated"""
+        if len(team.characters) == 0:
+            self.log(f'{team.name} has been defeated', dest='console')
+            return True
+        return False
+    
+    def execute_turn(self):
+        """Execute a single turn for the active team with a maximum number of moves"""
+        active_team = self.active_team()
+
+        for _ in range(self.moves_per_turn):
+            if active_team.characters:  # In case some players have been removed
+                # Pick one available player
+                player = random.choice(active_team.characters)
+                print(player)
+                self.initiate_player_action(player)
+            else:
+                break
+
+        self.next_turn()
+        print(">>>>>")
+        self.check_team_status(self.inactive_team())
+
+    def run_battle(self):
+        """Run the battle simulation until one team is defeated."""
+        self.log("Battle started!", dest='console')
+        while True:
+            # Execute a turn for the active team
+            self.execute_turn()
+            # Check if either team is defeated
+            if self.check_team_status(self.team1):
+                self.log(
+                    f"Battle ended! {self.team1.name} has been defeated.", dest='console')
+                break
+            elif self.check_team_status(self.team2):
+                self.log(
+                    f"Battle ended! {self.team2.name} has been defeated.", dest='console')
+                break
+        self.log("Battle simulation finished.", dest='console')
