@@ -55,16 +55,19 @@ class AutoBattleField:
         attacker_speed = self.effective_speed(attacker)
         target_speed = self.effective_speed(target)
         
-        #compensate for player speed
-        hp_damage = hp_damage * (attacker_speed / target_speed)
+        # compensate for player speed
+        if target_speed == 0:
+                damage_factor = 1
+        else:
+            damage_factor = min(1, attacker_speed / target_speed)
+        hp_damage *= damage_factor
 
         #reduce stamina and speed accordingly for both
         attacker.modify_attribute('stamina', -4)
         target.modify_attribute('stamina', -4)
         target.modify_attribute('hp', -hp_damage)
         target.modify_attribute('armor', -armor_damage)
-        self.check_player_status(target)
-        return hp_damage, armor_damage
+        return int(hp_damage), int(armor_damage)
 
     def effective_speed(self, character: Character, max_stamina: int = 100) -> float:
         base_speed = character.get_attribute('speed')
@@ -82,12 +85,13 @@ class AutoBattleField:
         opponent = self.pick_opponent()
         # Player attacks opponent
         # if turn number is a multiple of 3 use special ability instead of a normal attack
-        if self.turn_count % 3 == 0:
-            pass 
-        else:
-            dmg, armor =self.attack(player, opponent)
-            comment = f'{player.name} attacks {opponent.name}, dealing {dmg} damage, {opponent.name} has {opponent.get_attribute("hp")} hp , {opponent.get_attribute("armor")} armor ,{opponent.get_attribute("armor")} left'
-            self.log(comment, dest='console')
+        # if self.turn_count % 3 == 0:
+        #     pass 
+        # else:
+        dmg, armor =self.attack(player, opponent)
+        comment = f'{player.name} attacks {opponent.name}, dealing {dmg} damage, {opponent.name} has {opponent.get_attribute("hp"):.0f} hp , {opponent.get_attribute("armor"):.0f} armor ,{opponent.get_attribute("armor"):.0f} left'
+        self.log(comment, dest='console')
+        self.check_player_status(opponent)
 
 
     def pick_opponent(self,):
@@ -114,7 +118,7 @@ class AutoBattleField:
                 self.team2.characters.remove(player)
 
     def check_team_status(self, team:Team):
-        """Check if the team has been defeated"""
+        """Check if the team has been defeated, returns true if team has been defeated"""
         if len(team.characters) == 0:
             self.log(f'{team.name} has been defeated', dest='console')
             return True
@@ -123,19 +127,23 @@ class AutoBattleField:
     def execute_turn(self):
         """Execute a single turn for the active team with a maximum number of moves"""
         active_team = self.active_team()
+        opponent_team = self.team1 if active_team == self.team2 else self.team2
+
+        # If the opponent team is already defeated, return immediately.
+        if not opponent_team.characters:
+            self.log(
+            f"No opponents remain for {active_team.name}.", dest='console')
+            return
 
         for _ in range(self.moves_per_turn):
-            if active_team.characters:  # In case some players have been removed
-                # Pick one available player
+            # Check both teams before each move
+            if active_team.characters and opponent_team.characters:
                 player = random.choice(active_team.characters)
-                print(player)
                 self.initiate_player_action(player)
             else:
                 break
 
         self.next_turn()
-        print(">>>>>")
-        self.check_team_status(self.inactive_team())
 
     def run_battle(self):
         """Run the battle simulation until one team is defeated."""
@@ -145,11 +153,7 @@ class AutoBattleField:
             self.execute_turn()
             # Check if either team is defeated
             if self.check_team_status(self.team1):
-                self.log(
-                    f"Battle ended! {self.team1.name} has been defeated.", dest='console')
                 break
             elif self.check_team_status(self.team2):
-                self.log(
-                    f"Battle ended! {self.team2.name} has been defeated.", dest='console')
                 break
         self.log("Battle simulation finished.", dest='console')

@@ -30,7 +30,7 @@ naruto_data = {
         {"name": "armor", "value": 400},
         {"name": "range", "value": 300},
         {"name": "dmg", "value": 130},
-        {"name": "speed", "value": 450},
+        {"name": "speed", "value": 480},
         {"name": "stamina", "value": 1000}
     ],
     "special_abilities": [
