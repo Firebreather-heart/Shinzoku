@@ -16,3 +16,6 @@ class Team:
 
     def count(self):
         return len(self.characters)
+    
+    def __iter__(self):
+        return iter(self.characters)

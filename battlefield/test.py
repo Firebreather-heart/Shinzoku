@@ -36,3 +36,4 @@ data = {
 }
 
 sasuke = Character.from_json(data)
+sasuke.describe()

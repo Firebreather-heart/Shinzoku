@@ -66,6 +66,40 @@ class Character(object):
             'attributes': [attribute.__dict__ for attribute in self.attributes],
             'special_abilities': [special_ability.__dict__ for special_ability in self.special_abilities]
         }
+    
+    def describe(self):
+        print(f'Name: {self.name}')
+        print(f'Class: {self.character_class}')
+        print('Attributes:')
+        for attribute in self.attributes:
+            print(f'{attribute.name}: {attribute.value}')
+        print('Special Abilities:')
+        for special_ability in self.special_abilities:
+            print(f'{special_ability.name}: {special_ability.description} - {special_ability.value}')
+
+    def modify_attribute(self, attr_name:str, value:int):
+        try:
+            attribute = next(attr for attr in self.attributes if attr.name == attr_name)
+            attribute.value += value
+            setattr(self, attribute.name, attribute.value)
+        except StopIteration:
+            raise ValueError(f'No attribute with name {attr_name} found')
+        
+    def get_attribute(self, attr_name:str):
+        try:
+            return next(attr.value for attr in self.attributes if attr.name == attr_name)
+        except StopIteration:
+            raise ValueError(f'No attribute with name {attr_name} found')
+
+    def get_description(self):
+        return f"""
+        Name: {self.name}
+        Class: {self.character_class}
+        Attributes:
+        {self.attributes}
+        Special Abilities:
+        {self.special_abilities}
+        """
 
     @classmethod
     def from_json(cls, data):
