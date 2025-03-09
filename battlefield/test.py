@@ -9,7 +9,7 @@ naruto_data = {
     "class": "Ninja",
     "attributes": [
         {"name": "hp", "value": 5000},
-        {"name": "mp", "value": 800},
+        {"name": "mp", "value": 8000},
         {"name": "armor", "value": 600},
         {"name": "range", "value": 350},
         {"name": "dmg", "value": 250},
@@ -146,7 +146,7 @@ minato_data = {
     "class": "Ninja",
     "attributes": [
         {"name": "hp", "value": 4400},
-        {"name": "mp", "value": 800},
+        {"name": "mp", "value": 8000},
         {"name": "armor", "value": 580},
         {"name": "range", "value": 370},
         {"name": "dmg", "value": 260},
