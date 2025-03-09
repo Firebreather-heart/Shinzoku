@@ -24,3 +24,6 @@ class Team:
     def shuffle(self):
         import random
         random.shuffle(self.characters)
+
+    def __str__(self):
+        return self.name

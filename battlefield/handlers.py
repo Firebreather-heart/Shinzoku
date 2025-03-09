@@ -33,13 +33,12 @@ class SpecialAbilityHandler:
                 f"Special ability '{ability.name}' is not implemented.")
 
     def _evasion(self, caster, jutsu_name):
-        bonus = 20
         duration = 1  # active until the next attack
         self.battlefield.apply_status_effect(
             caster, "evasion", caster)
         self.battlefield.log(
-            f"{caster.name} activates {jutsu_name} for {duration} turn(s), gaining +{bonus} dodge.", dest="console")
-        return {"effect": "evasion", "bonus": bonus, "duration": duration}
+            f"{caster.name} activates {jutsu_name} for {duration} turn(s), ", dest="console")
+        return {"effect": "evasion",  "duration": duration}
 
     def _critical_strike(self, caster, target, jutsu_name):
         base_damage = caster.get_attribute("dmg")
@@ -75,6 +74,8 @@ class SpecialAbilityHandler:
 
     def _heal_others(self, caster, target, jutsu_name):
         heal_amount = caster.get_special_ability("heal others").value
+        caster_team = self.battlefield.get_team_by_player(caster)
+        target = min(caster_team, key=lambda x:x.get_attribute("hp"))
         target.modify_attribute("hp", heal_amount)
         self.battlefield.log(
             f"{caster.name} uses {jutsu_name} on {target.name} for {heal_amount} HP.", dest="console")

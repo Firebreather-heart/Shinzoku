@@ -49,6 +49,10 @@ class AutoBattleField:
     def get_player(self, team:Team, name:str):
         """Get player by team name and player name"""
         return next((player for player in team.characters if player.name == name))
+    
+    def get_team_by_player(self, player:Character):
+        """Get the team by player"""
+        return self.team1 if player in self.team1.characters else self.team2
 
     def evaluate_turn(self):
         pass
@@ -61,7 +65,8 @@ class AutoBattleField:
             self._turn_state_marker = self.team1
         self.turn_count += 1
         self._check_apply_active_poison_effects()
-        time.sleep(0.1)
+        # time.sleep(0.1)
+        self.log(f'Turn {self.turn_count}', dest='console')
     
     def active_team(self):
         """Get the active team"""
@@ -77,7 +82,6 @@ class AutoBattleField:
             self.log(f'{attacker.name} is stunned and cannot attack', dest='console')
             return 0, 0
         damage = attacker.get_attribute('dmg')
-        target_hp = target.get_attribute('hp')
         target_armor = target.get_attribute('armor')
         hp_damage, armor_damage = self.calculate_hp_armor_damage(target_armor, damage)
 
@@ -95,6 +99,9 @@ class AutoBattleField:
         else:
             damage_factor =  attacker_speed / target_speed
         hp_damage *= damage_factor
+
+        hp_damage = max(1, int(hp_damage))
+        armor_damage = max(0, int(armor_damage))
 
         #reduce stamina and speed accordingly for both
         attacker.modify_attribute('stamina', -4)
@@ -231,7 +238,7 @@ class AutoBattleField:
 
         self.next_turn()
 
-    def run_battle(self):
+    def run_battle(self, max_turns:int=200)->Team:
         """Run the battle simulation until one team is defeated."""
         self.log("Battle started!", dest='console')
         self.log(f"{self.team1.name} vs. {self.team2.name}", dest='console')
@@ -242,7 +249,21 @@ class AutoBattleField:
             self.execute_turn()
             # Check if either team is defeated
             if self.check_team_status(self.team1):
+                winner = self.team2
                 break
             elif self.check_team_status(self.team2):
+                winner = self.team1
+                break
+            # Check if the maximum number of turns has been reached
+            if self.turn_count >= max_turns:
+                self.log("Maximum number of turns reached.", dest='console')
+                # evaluate winner by team rating
+                if self.team1.rating > self.team2.rating:
+                    winner = self.team1
+                else:
+                    winner = self.team2
                 break
         self.log("Battle simulation finished.", dest='console')
+        self.log(f"The winner is {winner.name}, team ratings: {self.team1} :: {self.team1.rating}\
+                {self.team2} :: {self.team2.rating} ", dest='console')
+        return winner
