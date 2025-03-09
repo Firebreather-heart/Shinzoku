@@ -17,10 +17,21 @@ class Attribute(object):
 
 
 class SpecialAbility:
-    def __init__(self, name, value, mp_cost):
+    def __init__(self, name, value, mp_cost, jutsu_name):
         self.name = name
+        self.jutsu_name = jutsu_name
         self.value = value
         self.mp_cost = mp_cost
+        self.is_status_effect = False
+        self.duration = 0
+        if name in ['evasion', 'poison', 'stun',]:
+            self.is_status_effect = True
+        if name == 'poison':
+            self.duration = 3
+        elif name == 'stun':
+            self.duration = 1
+        elif name == 'evasion':
+            self.duration = 1
         self.description = self.get_description(name)
 
     def get_description(self, name):
@@ -52,6 +63,12 @@ class Character(object):
         self.attributes = attributes
         self.special_abilities = []
         self.rank = 0
+        self.status_effects = {
+            "poison": 0,
+            "stun": 0,
+            "buff": 0,
+            "evasion": 0,
+        } #status effects are per-turn effects
         for attribute in attributes:
             self.rank += attribute.value
             setattr(self, attribute.name, attribute.value)
@@ -93,6 +110,12 @@ class Character(object):
             return next(attr.value for attr in self.attributes if attr.name == attr_name)
         except StopIteration:
             raise ValueError(f'No attribute with name {attr_name} found')
+        
+    def get_special_ability(self, ability_name: str)->SpecialAbility:
+        try:
+            return next(ability for ability in self.special_abilities if ability.name == ability_name)
+        except StopIteration:
+            raise ValueError(f'No special ability with name {ability_name}')
 
     def get_description(self):
         return f"""
@@ -113,7 +136,8 @@ class Character(object):
         character = cls(name, attributes, character_class)
         for special_ability in data['special_abilities']:
             character._add_special_ability(SpecialAbility(
-                special_ability['name'], special_ability['value'], special_ability['mp_cost']))
+                special_ability['name'], special_ability['value'], 
+                special_ability['mp_cost'], special_ability['jutsu_name']))
         return character
 
     def battle_rank(self):
