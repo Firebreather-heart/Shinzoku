@@ -247,6 +247,8 @@ class AutoBattleField:
         while True:
             # Execute a turn for the active team
             self.execute_turn()
+            self.team1.compute_rating()
+            self.team2.compute_rating()
             # Check if either team is defeated
             if self.check_team_status(self.team1):
                 winner = self.team2

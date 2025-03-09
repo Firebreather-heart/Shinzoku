@@ -12,7 +12,7 @@ tanjiro_data = {
         {"name": "mp", "value": 7000},
         {"name": "armor", "value": 500},
         {"name": "range", "value": 350},
-        {"name": "dmg", "value": 240},
+        {"name": "dmg", "value": 500},
         {"name": "speed", "value": 450},
         {"name": "stamina", "value": 1100}
     ],
@@ -98,7 +98,7 @@ muzan_data = {
         {"name": "mp", "value": 8000},
         {"name": "armor", "value": 650},
         {"name": "range", "value": 380},
-        {"name": "dmg", "value": 280},
+        {"name": "dmg", "value": 600},
         {"name": "speed", "value": 480},
         {"name": "stamina", "value": 1200}
     ],
