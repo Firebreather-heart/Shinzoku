@@ -55,7 +55,7 @@ class SpecialAbilityHandler:
         self.battlefield.apply_status_effect(
             caster, "poison", target)
         self.battlefield.log(
-            f"{caster.name} uses {jutsu_name} {target.name} for {duration} turns (damage: {poison_damage}/turn).", dest="console")
+            f"{caster.name} uses {jutsu_name} on {target.name} for {duration} turns (damage: {poison_damage}/turn).", dest="console")
         return {"effect": "poison", "damage": poison_damage, "duration": duration}
 
     def _stun(self, caster, target, jutsu_name):

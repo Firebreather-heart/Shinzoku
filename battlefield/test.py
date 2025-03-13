@@ -20,7 +20,11 @@ naruto_data = {
         {"name": "evasion", "value": 200, "mp_cost": 50,
             "jutsu_name": "Shadow Clone Evasion"},
         {"name": "critical strike", "value": 3,
-            "mp_cost": 100, "jutsu_name": "Rasengan Barrage"}
+            "mp_cost": 100, "jutsu_name": "Chou Odama Rasenshuriken"},
+        {
+            "name": "critical strike", "value": 5,
+            "mp_cost": 300, "jutsu_name": "Biju-dama rasenshuriken",
+        }
     ]
 }
 
@@ -29,7 +33,7 @@ sasuke_data = {
     "class": "Ninja",
     "attributes": [
         {"name": "hp", "value": 4800},
-        {"name": "mp", "value": 750},
+        {"name": "mp", "value": 5000},
         {"name": "armor", "value": 620},
         {"name": "range", "value": 340},
         {"name": "dmg", "value": 260},
@@ -37,9 +41,10 @@ sasuke_data = {
         {"name": "stamina", "value": 1150}
     ],
     "special_abilities": [
-        {"name": "stun", "value": 0, "mp_cost": 80,
+        {"name": "stun", "value": 2, "mp_cost": 80,
             "jutsu_name": "Chidori Breakdown"},
-        {"name": "buff", "value": 30, "mp_cost": 60, "jutsu_name": "Susanoo"}
+        {"name": "buff", "value": 50, "mp_cost": 600, "jutsu_name": "Susanoo"},
+        {"name": "poison", "value": 5, "mp_cost": 400, "jutsu_name": "Amaterasu"},
     ]
 }
 
@@ -48,7 +53,7 @@ kakashi_data = {
     "class": "Ninja",
     "attributes": [
         {"name": "hp", "value": 4500},
-        {"name": "mp", "value": 700},
+        {"name": "mp", "value": 3000},
         {"name": "armor", "value": 580},
         {"name": "range", "value": 360},
         {"name": "dmg", "value": 240},
@@ -57,7 +62,9 @@ kakashi_data = {
     ],
     "special_abilities": [
         {"name": "heal self", "value": 150,
-            "mp_cost": 70, "jutsu_name": "Healing Light"}
+            "mp_cost": 70, "jutsu_name": "Healing Light"},
+        {"name": "critical strike", "value": 5, "mp_cost": 40, "jutsu_name": "Kamui Raikiri"},
+        {"name": "buff", "value": 50, "mp_cost": 600, "jutsu_name": "Susanoo"},
     ]
 }
 
@@ -65,8 +72,8 @@ sakura_data = {
     "name": "Sakura Haruno",
     "class": "Medic",
     "attributes": [
-        {"name": "hp", "value": 4300},
-        {"name": "mp", "value": 900},
+        {"name": "hp", "value": 6000},
+        {"name": "mp", "value": 2000},
         {"name": "armor", "value": 600},
         {"name": "range", "value": 320},
         {"name": "dmg", "value": 220},
@@ -74,7 +81,7 @@ sakura_data = {
         {"name": "stamina", "value": 1050}
     ],
     "special_abilities": [
-        {"name": "heal others", "value": 150,
+        {"name": "heal others", "value": 300,
             "mp_cost": 50, "jutsu_name": "Celestial Heal"}
     ]
 }
@@ -93,7 +100,7 @@ itachi_data = {
     "class": "Ninja",
     "attributes": [
         {"name": "hp", "value": 4600},
-        {"name": "mp", "value": 800},
+        {"name": "mp", "value": 3000},
         {"name": "armor", "value": 600},
         {"name": "range", "value": 330},
         {"name": "dmg", "value": 250},
@@ -102,7 +109,9 @@ itachi_data = {
     ],
     "special_abilities": [
         {"name": "heal self", "value": 200,
-            "mp_cost": 80, "jutsu_name": "Crow Healing"}
+            "mp_cost": 80, "jutsu_name": "Crow Healing"},
+        {"name": "buff", "value": 35, "mp_cost": 350, "jutsu_name": "Susanoo"},
+        {"name": "poison", "value": 4, "mp_cost": 400, "jutsu_name": "Amaterasu"},
     ]
 }
 
@@ -111,7 +120,7 @@ obito_data = {
     "class": "Ninja",
     "attributes": [
         {"name": "hp", "value": 4800},
-        {"name": "mp", "value": 750},
+        {"name": "mp", "value": 6050},
         {"name": "armor", "value": 620},
         {"name": "range", "value": 340},
         {"name": "dmg", "value": 260},
@@ -119,7 +128,8 @@ obito_data = {
         {"name": "stamina", "value": 1150}
     ],
     "special_abilities": [
-        {"name": "stun", "value": 0, "mp_cost": 80, "jutsu_name": "Kamui Stun"}
+        {"name": "critical strike", "value": 2, "mp_cost": 180, "jutsu_name": "Fireball Jutsu"},
+        {"name": "evasion", "value": 300, "mp_cost": 80, "jutsu_name": "Kamui"},
     ]
 }
 
@@ -128,7 +138,7 @@ shikamaru_data = {
     "class": "Tactician",
     "attributes": [
         {"name": "hp", "value": 4100},
-        {"name": "mp", "value": 650},
+        {"name": "mp", "value": 2500},
         {"name": "armor", "value": 540},
         {"name": "range", "value": 310},
         {"name": "dmg", "value": 220},
@@ -137,7 +147,8 @@ shikamaru_data = {
     ],
     "special_abilities": [
         {"name": "buff", "value": 25, "mp_cost": 40,
-            "jutsu_name": "Shadow Strategem"}
+            "jutsu_name": "Shadow Stitching Jutsu"},
+        {"name": "stun", "value": 2, "mp_cost": 100, "jutsu_name": "Shadow Strangle Jutsu"}
     ]
 }
 
@@ -155,7 +166,9 @@ minato_data = {
     ],
     "special_abilities": [
         {"name": "evasion", "value": 220, "mp_cost": 60,
-            "jutsu_name": "Flying Thunder God Evasion"}
+            "jutsu_name": "Flying Thunder God Evasion"},
+        {"name": "critical strike", "value": 3, "mp_cost": 100, "jutsu_name": "Rasengan"},
+        {"name": "critical strike", "value": 5, "mp_cost": 200, "jutsu_name": "Hiriashin Level 2"},
     ]
 }
 
@@ -174,7 +187,3 @@ battlefield = AutoBattleField(team_allied, team_adversaries, moves_per_turn=3)
 # Run the battle simulation until one team is defeated.
 battlefield.run_battle()
 
-print("Battle finished!")
-print("Battle Commentary:")
-for entry in battlefield.commentary:
-    print(entry)

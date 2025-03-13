@@ -210,6 +210,7 @@ class AutoBattleField:
         for effect in self.status_effects:
             if effect.name == 'poison':
                 effect.effect_receiver.modify_attribute('hp', -effect.value)
+                self.log(f'{effect.effect_receiver.name}  -{effect.value} hp', dest='console')
                 effect.duration -= 1
                 if effect.duration == 0:
                     self.status_effects.remove(effect)
@@ -241,7 +242,7 @@ class AutoBattleField:
     def run_battle(self, max_turns:int=200)->Team:
         """Run the battle simulation until one team is defeated."""
         self.log("Battle started!", dest='console')
-        self.log(f"{self.team1.name} vs. {self.team2.name}", dest='console')
+        self.log(f"{self.team1.name} {self.team1.compute_rating()} vs. {self.team2.name} {self.team2.compute_rating()}", dest='console')
         self.log(f"Team {self.team1.name} members: {[player.name for player in self.team1.characters]}", dest='console')
         self.log(f"Team {self.team2.name} members: {[player.name for player in self.team2.characters]}", dest='console')
         while True:
