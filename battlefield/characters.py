@@ -14,7 +14,23 @@ class Attribute(object):
 
     def __eq__(self, other):
         return self.name == other.name
+    
 
+class Position:
+    def __init__(self, x: int = 0, y: int = 0):
+        self.x = x
+        self.y = y
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.x == other.x and self.y == other.y
+
+    def __str__(self):
+        if self.x is None or self.y is None:
+            return "(None)"
+        return f"({self.x}, {self.y})"
+    
 
 class SpecialAbility:
     def __init__(self, name, value, mp_cost, jutsu_name):
@@ -63,6 +79,7 @@ class Character(object):
         self.attributes = attributes
         self.special_abilities = []
         self.rank = 0
+        self.position = Position(0, 0)
         self.status_effects = {
             "poison": 0,
             "stun": 0,
@@ -138,6 +155,7 @@ class Character(object):
             character._add_special_ability(SpecialAbility(
                 special_ability['name'], special_ability['value'], 
                 special_ability['mp_cost'], special_ability['jutsu_name']))
+        character.position = None
         return character
 
     def battle_rank(self):
