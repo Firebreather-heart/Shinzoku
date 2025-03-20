@@ -31,6 +31,25 @@ class Position:
             return "(None)"
         return f"({self.x}, {self.y})"
     
+    def get(self):
+        return self.x, self.y
+    
+    
+    def __getitem__(self, idx):
+        if idx == 0:
+            return self.x
+        elif idx == 1:
+            return self.y
+        else:
+            raise IndexError('Index out of range')
+        
+    def __add__(self, other):
+        if isinstance(other, Position):
+            return Position(self.x + other.x, self.y + other.y)
+        elif isinstance(other, tuple) and len(other) == 2:
+            return Position(self.x + other[0], self.y + other[1])
+        return NotImplemented
+    
 
 class SpecialAbility:
     def __init__(self, name, value, mp_cost, jutsu_name):
@@ -80,6 +99,7 @@ class Character(object):
         self.special_abilities = []
         self.rank = 0
         self.position = Position(0, 0)
+        self.controller = ''
         self.status_effects = {
             "poison": 0,
             "stun": 0,

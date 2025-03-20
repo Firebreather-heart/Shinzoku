@@ -2,10 +2,11 @@ from typing import List
 from characters import Character
 
 class Team:
-    def __init__(self, name):
+    def __init__(self, name, control='ai',):
         self.name =  name 
         self.rating = 0
         self.characters = []
+        self.control = control
 
     def _populate_team(self, characters:List[Character]):
         self.characters = characters

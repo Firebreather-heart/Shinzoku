@@ -2,7 +2,7 @@ from enum import Enum
 import random
 from math import floor
 from typing import List, Tuple, Set, Optional
-from characters import Character
+from characters import Character, Position
 
 
 def manhattan_distance(pos1: tuple, pos2: tuple) -> int:
@@ -17,7 +17,7 @@ class AIStrategy(Enum):
 
 
 class BattleAI:
-    def __init__(self, difficulty: str = "medium"):
+    def __init__(self, difficulty: str = "hard"):
         self.difficulty = difficulty.lower()
         # Different strategies per difficulty
         self.strategies = {
@@ -39,7 +39,9 @@ class BattleAI:
             'opportunities': [],
             'safe_spots': set(),
             'danger_zones': set(),
-            'team_formation': None
+            'team_formation': None,
+            'enemies': [enemies],
+            'allies': [allies]
         }
 
         # Identify immediate threats
@@ -65,7 +67,7 @@ class BattleAI:
 
         return analysis
 
-    def _calculate_threat_level(self, character) -> float:
+    def _calculate_threat_level(self, character:Character) -> float:
         """Calculate how dangerous a character is based on their attributes."""
         hp_ratio = character.get_attribute('hp') / 1000  # Normalize HP
         damage_ratio = character.get_attribute('dmg') / 300  # Normalize damage
@@ -78,53 +80,13 @@ class BattleAI:
         """Choose next move based on current strategy and battlefield analysis."""
         analysis = self.analyze_battlefield(
             character, allies, enemies, grid_size)
-
-        if self.current_strategy == AIStrategy.TACTICAL:
-            return self._tactical_move(character, analysis, grid_size)
-        elif self.current_strategy == AIStrategy.AGGRESSIVE:
-            return self._aggressive_move(character, analysis, grid_size)
-        elif self.current_strategy == AIStrategy.DEFENSIVE:
-            return self._defensive_move(character, analysis, grid_size)
+        print(analysis)
+        enemy = self.choose_attack_target(character, enemies)
+        if enemy is not None:
+            return self._approach_and_optimize_move(character, enemy, grid_size), enemy
         else:
-            return self._random_move(character, grid_size)
-        
-    def choose_attack_target(self, character: Character, enemy_characters: List[Character]) -> Optional[Character]:
-        """
-        Choose an enemy to attack.
-        This sample implementation chooses the enemy with the lowest HP.
-        """
-        if not enemy_characters:
-            return None
-        return min(enemy_characters, key=lambda enemy: enemy.get_attribute('hp'))
-
-    def _tactical_move(self, character, analysis: dict, grid_size: tuple) -> tuple:
-        """Smart positioning considering threats, opportunities, and team formation."""
-        current_pos = character.position
-        moves = self._get_possible_moves(character, grid_size)
-
-        # Score each possible move
-        move_scores = {}
-        for move in moves:
-            score = 0
-            # Avoid danger zones
-            if move in analysis['danger_zones']:
-                score -= 50
-
-            # Stay near allies but not too close
-            for ally in analysis['team_formation']:
-                dist = manhattan_distance(move, ally)
-                if 2 <= dist <= 4:  # Ideal formation distance
-                    score += 20
-
-            # Position for opportunities
-            for opportunity_type, target in analysis['opportunities']:
-                if manhattan_distance(move, target.position) <= character.get_attribute('range') // 50:
-                    score += 30 if opportunity_type == 'finishing_blow' else 15
-
-            move_scores[move] = score
-
-        # Choose the best scoring move
-        return max(move_scores.items(), key=lambda x: x[1])[0]
+            # Fallback: stay in the current position if no enemy is found
+            return (character.position.x, character.position.y), enemy
 
     def choose_action(self, character, allies: list, enemies: list) -> tuple:
         """Decide what action to take (attack, heal, buff, etc.)."""
@@ -196,16 +158,16 @@ class BattleAI:
 
     def _get_attack_range(self, character) -> int:
         """Convert character's range attribute to grid distance."""
-        return max(1, character.get_attribute('range') // 50)
+        return character.get_attribute('range')
 
 
     def _get_area_positions(self, center: tuple, radius: int) -> set:
-        """Get all grid positions within given radius of center point."""
+        """Get all grid positions within given Chebyshev distance (radius) of center point."""
         positions = set()
         x, y = center
         for dx in range(-radius, radius + 1):
             for dy in range(-radius, radius + 1):
-                if abs(dx) + abs(dy) <= radius:  # Manhattan distance check
+                if max(abs(dx), abs(dy)) <= radius:
                     positions.add((x + dx, y + dy))
         return positions
 
@@ -255,96 +217,93 @@ class BattleAI:
             return "scattered"
 
 
-    def _get_possible_moves(self, character, grid_size: tuple) -> set:
+    def _get_possible_moves(self, character:Character, grid_size: tuple) -> set:
         """Get all possible move positions for a character."""
-        current_pos = character.position
-        move_range = self.get_move_steps(character)
+        current_pos = character.position.x, character.position.y
+        move_range = character.get_attribute('range')
         possible = set()
 
         for dx in range(-move_range, move_range + 1):
             for dy in range(-move_range, move_range + 1):
-                if abs(dx) + abs(dy) <= move_range:
-                    new_x = current_pos[0] + dx
-                    new_y = current_pos[1] + dy
-                    if 0 <= new_x < grid_size[0] and 0 <= new_y < grid_size[1]:
-                        possible.add((new_x, new_y))
+                new_x = current_pos[0] + dx
+                new_y = current_pos[1] + dy
+                if 0 <= new_x < grid_size[0] and 0 <= new_y < grid_size[1]:
+                    possible.add((new_x, new_y))
+
+        #remove the current position from the list of possible moves
+        if current_pos in possible:
+            possible.remove(current_pos)
         return possible
 
+    def move_towards(self, current: Tuple[int, int], target: Tuple[int, int]) -> Tuple[int, int]:
+        """
+        Returns a new position that is one step from 'current' toward 'target'
+        along each axis.
+        """
+        cur_x, cur_y = current
+        tar_x, tar_y = target
 
-    def _aggressive_move(self, character, analysis: dict, grid_size: tuple) -> tuple:
-        """Move aggressively toward nearest enemy or opportunity."""
-        moves = self._get_possible_moves(character, grid_size)
-        if not moves:
-            return character.position
+        # Step in x-direction
+        if tar_x > cur_x:
+            step_x = 1
+        elif tar_x < cur_x:
+            step_x = -1
+        else:
+            step_x = 0
 
-        # Prioritize moves that get us closer to wounded targets
-        best_move = character.position
-        best_score = float('-inf')
+        # Step in y-direction
+        if tar_y > cur_y:
+            step_y = 1
+        elif tar_y < cur_y:
+            step_y = -1
+        else:
+            step_y = 0
 
-        for move in moves:
-            score = 0
-            # Score based on proximity to opportunities
-            for opp_type, target in analysis['opportunities']:
-                dist = manhattan_distance(move, target.position)
-                if opp_type == 'finishing_blow':
-                    score += 50 - (dist * 5)
-                else:
-                    score += 30 - (dist * 3)
-
-            if score > best_score:
-                best_score = score
-                best_move = move
-
-        return best_move
-
-
-    def _defensive_move(self, character, analysis: dict, grid_size: tuple) -> tuple:
-        """Move defensively, avoiding threats and staying near allies."""
-        moves = self._get_possible_moves(character, grid_size)
-        if not moves:
-            return character.position
-
-        best_move = character.position
-        best_score = float('-inf')
-
-        for move in moves:
-            score = 0
-            # Heavily penalize moves into danger zones
-            if move in analysis['danger_zones']:
-                score -= 100
-
-            # Reward moves that keep us close to allies
-            if analysis['team_formation']:
-                dist_to_center = manhattan_distance(
-                    move, analysis['team_formation']['center'])
-                score += 30 - (dist_to_center * 2)
-
-            # Reward moves that keep us away from threats
-            for threat, level in analysis['threats']:
-                dist = manhattan_distance(move, threat.position)
-                score += dist * level * 10
-
-            if score > best_score:
-                best_score = score
-                best_move = move
-
-        return best_move
+        return (cur_x + step_x, cur_y + step_y)
+    
+    def _approach_and_optimize_move(self, character: Character, enemy:Character, grid_size: tuple) -> Tuple[int, int]:
+        """
+        Always try to close the distance toward the nearest enemy.
+        If the enemy is far (more than attack_range + buffer), move directly toward it.
+        Otherwise, when just outside of range, choose an optimized move based on difficulty.
+        """
+        current_pos = (character.position.x, character.position.y)
+        attack_range = self._get_attack_range(character) 
+        buffer = 1  
 
 
-    def _random_move(self, character, grid_size: tuple) -> tuple:
-        """Make a random valid move."""
-        moves = self._get_possible_moves(character, grid_size)
-        if not moves:
-            return character.position
-        return random.choice(list(moves))
+        # Find the nearest enemy by Manhattan distance
+        enemy_pos = (enemy.position.x, enemy.position.y)
+        current_distance = manhattan_distance(current_pos, enemy_pos)
 
+        # If enemy is far, take maximum steps toward enemy
+        if current_distance > attack_range + buffer:
+            new_pos = current_pos
+            for _ in range(character.range): #type:ignore
+                new_pos = self.move_towards(new_pos, enemy_pos)
+            # Ensure new position stays within grid boundaries
+            new_x = max(0, min(new_pos[0], grid_size[0] - 1))
+            new_y = max(0, min(new_pos[1], grid_size[1] - 1))
+            return (new_x, new_y)
+        else:
+            # Enemy is close but just outside range; choose from moves that put you as near as possible.
+            moves = self._get_possible_moves(character, grid_size)
+            # Filter moves that are within attack_range + buffer of enemy
+            valid_moves = [move for move in moves if manhattan_distance(
+                move, enemy_pos) <= attack_range + buffer]
+            if valid_moves:
+                # For "easy" and "medium", simply choose the move that minimizes distance.
+                # For "hard" you could extend this to consider threats/formation; here we choose minimum distance.
+                return min(valid_moves, key=lambda move: manhattan_distance(move, enemy_pos))
+            # Fallback: if no filtered move found, return a move that minimizes distance among all moves.
+            return min(moves, key=lambda move: manhattan_distance(move, enemy_pos))
 
     def _find_healing_ability(self, character) -> Optional[object]:
-        """Find a healing ability if the character has one."""
-        for ability in character.special_abilities:
-            if ability.name in ['heal self', 'heal others']:
-                return ability
-        return None
+            """Find a healing ability if the character has one."""
+            for ability in character.special_abilities:
+                if ability.name in ['heal self', 'heal others']:
+                    return ability
+            return None
 
 
     def _find_critical_ally(self, allies: list) -> Optional[object]:
@@ -382,7 +341,55 @@ class BattleAI:
         # Otherwise use priority targeting
         return self._identify_priority_target(in_range_enemies)
 
+    
+    def choose_attack_target(self, character: Character, enemy_characters: List[Character]) -> Optional[Character]:
+        """
+        Choose an enemy target that factors both difficulty criteria and proximity.
+        For all difficulties, a candidate's score is affected by its distance.
+        - Easy: candidates are chosen randomly with a bias favoring closer enemies.
+        - Medium: choose the enemy with the lowest (HP + distance_weight * distance).
+        - Hard: choose the enemy with the highest (threat / (distance + 1)).
+        """
+        valid_targets = [
+            enemy for enemy in enemy_characters if enemy.get_attribute('hp') > 0]
+        if not valid_targets:
+            return None
 
-    def get_move_steps(self, character) -> int:
-        """Convert character's speed to movement steps."""
-        return max(1, character.get_attribute('speed') // 100)
+        att_pos = (character.position.x, character.position.y)
+
+        if self.difficulty == "easy":
+            # Weight each enemy by the inverse of its distance (closer enemies are more likely)
+            total_weight = sum(1 / (manhattan_distance(att_pos, (enemy.position.x, enemy.position.y)) + 1)
+                            for enemy in valid_targets)
+            r = random.uniform(0, total_weight)
+            cumulative = 0
+            for enemy in valid_targets:
+                weight = 1 / (manhattan_distance(att_pos,
+                            (enemy.position.x, enemy.position.y)) + 1)
+                cumulative += weight
+                if cumulative >= r:
+                    return enemy
+            return random.choice(valid_targets)
+
+        elif self.difficulty == "medium":
+            # Define a score where lower HP and closer distance yield a lower score.
+            distance_weight = 5  # tweak this multiplier to adjust the importance of distance
+
+            def score_(enemy):
+                hp = enemy.get_attribute('hp')
+                distance = manhattan_distance(
+                    att_pos, (enemy.position.x, enemy.position.y))
+                return hp + distance_weight * distance
+            return min(valid_targets, key=score_)
+
+        elif self.difficulty == "hard":
+            # Calculate a ratio: high threat level and low distance are preferred.
+            def score(enemy):
+                threat = self._calculate_threat_level(enemy)
+                distance = manhattan_distance(
+                    att_pos, (enemy.position.x, enemy.position.y))
+                return threat / (distance + 1)  # add 1 to avoid division by zero
+            return max(valid_targets, key=score)
+
+        else:
+            return random.choice(valid_targets)

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>AI vs. AI Battlefield</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <style>
+            pre {
+                background: #f8f9fa;
+                padding: 1rem;
+            }
+
+            body {
+                margin-top: 2rem;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <h1 id="turn-header">AI vs. AI Battlefield - Turn {{ turn }}</h1>
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>Grid</h3>
+                    <div id="grid">{{ grid|safe }}</div>
+                </div>
+                <div class="col-md-4">
+                    <h3>Battle Log</h3>
+                    <div id="log" class="border p-2" style="max-height: 400px; overflow-y:scroll;">
+                        {{ log|safe }}
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col">
+                    <button id="nextTurnBtn" class="btn btn-primary btn-lg btn-block">Next Turn</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.getElementById("nextTurnBtn").addEventListener("click", () => {
+                fetch("/next_turn", { method: "POST" })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("turn-header").innerText = "AI vs. AI Battlefield - Turn " + data.turn;
+                        document.getElementById("grid").innerHTML = data.grid;
+                        document.getElementById("log").innerHTML = data.log.replace(/\n/g, "<br>");
+                    })
+                    .catch(error => console.error("Error:", error));
+            });
+        </script>
+    </body>
+
+</html>
