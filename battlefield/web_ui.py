@@ -11,66 +11,89 @@ app = Flask(__name__)
 
 # First character for Team Alpha
 team_a_data = {
-    "name": "Alpha Warrior",
-    "class": "Warrior",
+    "name": "Naruto Uzumaki",
+    "class": "Ninja",
     "attributes": [
-        {"name": "hp", "value": 1000},
-        {"name": "mp", "value": 500},
-        {"name": "armor", "value": 50},
-        {"name": "range", "value": 3},
-        {"name": "dmg", "value": 400},
-        {"name": "speed", "value": 200},
-        {"name": "stamina", "value": 1000}
+        {"name": "hp", "value": 5000},
+        {"name": "mp", "value": 8000},
+        {"name": "armor", "value": 600},
+        {"name": "range", "value": 5},
+        {"name": "dmg", "value": 250},
+        {"name": "speed", "value": 500},
+        {"name": "stamina", "value": 1200}
     ],
-    "special_abilities": []
+    "special_abilities": [
+        {"name": "evasion", "value": 200, "mp_cost": 50,
+            "jutsu_name": "Shadow Clone Evasion"},
+        {"name": "critical strike", "value": 3,
+            "mp_cost": 100, "jutsu_name": "Chou Odama Rasenshuriken"},
+        {
+            "name": "critical strike", "value": 5,
+            "mp_cost": 300, "jutsu_name": "Biju-dama rasenshuriken",
+        }
+    ]
 }
 
 # Second character for Team Alpha
 team_a_data_2 = {
-    "name": "Alpha Mage",
-    "class": "Mage",
+    "name": "Madara Uchiha",
+    "class": "Ninja",
     "attributes": [
-        {"name": "hp", "value": 700},
-        {"name": "mp", "value": 800},
-        {"name": "armor", "value": 30},
-        {"name": "range", "value": 4},
-        {"name": "dmg", "value": 550},
-        {"name": "speed", "value": 180},
-        {"name": "stamina", "value": 800}
+        {"name": "hp", "value": 5200},
+        {"name": "mp", "value": 850},
+        {"name": "armor", "value": 700},
+        {"name": "range", "value": 5},
+        {"name": "dmg", "value": 280},
+        {"name": "speed", "value": 510},
+        {"name": "stamina", "value": 1250}
     ],
-    "special_abilities": []
+    "special_abilities": [
+        {"name": "critical strike", "value": 3, "mp_cost": 100,
+            "jutsu_name": "Infinite Tsukuyomi Smash"}
+    ]
 }
 
 # First character for Team Bravo
 team_b_data = {
-    "name": "Bravo Assassin",
-    "class": "Assassin",
+    "name": "Sasuke Uchiha",
+    "class": "Ninja",
     "attributes": [
-        {"name": "hp", "value": 300},
-        {"name": "mp", "value": 400},
-        {"name": "armor", "value": 40},
-        {"name": "range", "value": 5},
-        {"name": "dmg", "value": 500},
-        {"name": "speed", "value": 250},
-        {"name": "stamina", "value": 900}
+        {"name": "hp", "value": 4800},
+        {"name": "mp", "value": 5000},
+        {"name": "armor", "value": 620},
+        {"name": "range", "value": 4},
+        {"name": "dmg", "value": 260},
+        {"name": "speed", "value": 490},
+        {"name": "stamina", "value": 1150}
     ],
-    "special_abilities": []
+    "special_abilities": [
+        {"name": "stun", "value": 2, "mp_cost": 80,
+            "jutsu_name": "Chidori Breakdown"},
+        {"name": "buff", "value": 50, "mp_cost": 600, "jutsu_name": "Susanoo"},
+        {"name": "poison", "value": 5, "mp_cost": 400, "jutsu_name": "Amaterasu"},
+    ]
 }
 
 # Second character for Team Bravo
 team_b_data_2 = {
-    "name": "Bravo Archer",
-    "class": "Archer",
+    "name": "Kakashi Hatake",
+    "class": "Ninja",
     "attributes": [
-        {"name": "hp", "value": 500},
-        {"name": "mp", "value": 300},
-        {"name": "armor", "value": 35},
-        {"name": "range", "value": 6},
-        {"name": "dmg", "value": 400},
-        {"name": "speed", "value": 220},
-        {"name": "stamina", "value": 850}
+        {"name": "hp", "value": 4500},
+        {"name": "mp", "value": 3000},
+        {"name": "armor", "value": 580},
+        {"name": "range", "value": 4},
+        {"name": "dmg", "value": 240},
+        {"name": "speed", "value": 480},
+        {"name": "stamina", "value": 1100}
     ],
-    "special_abilities": []
+    "special_abilities": [
+        {"name": "heal self", "value": 150,
+            "mp_cost": 70, "jutsu_name": "Healing Light"},
+        {"name": "critical strike", "value": 5,
+            "mp_cost": 40, "jutsu_name": "Kamui Raikiri"},
+        {"name": "buff", "value": 50, "mp_cost": 600, "jutsu_name": "Susanoo"},
+    ]
 }
 
 teamA = Team("Alpha")

@@ -27,6 +27,8 @@ class BattleAI:
         }
         self.current_strategy = self.pick_strategy()
         self.memory = {}  # Remember past actions and their outcomes
+        self.allies = []
+        self.enemies = []
 
     def pick_strategy(self) -> AIStrategy:
         """Picks a strategy based on difficulty."""
@@ -43,7 +45,8 @@ class BattleAI:
             'enemies': [enemies],
             'allies': [allies]
         }
-
+        self.allies = allies 
+        self.enemies = enemies
         # Identify immediate threats
         for enemy in enemies:
             threat_level = self._calculate_threat_level(enemy)
@@ -222,6 +225,8 @@ class BattleAI:
         current_pos = character.position.x, character.position.y
         move_range = character.get_attribute('range')
         possible = set()
+        occupied = [(i.position.x, i.position.y)
+                    for i in self.enemies] + [(i.position.x, i.position.y) for i in self.allies]
 
         for dx in range(-move_range, move_range + 1):
             for dy in range(-move_range, move_range + 1):
@@ -233,6 +238,7 @@ class BattleAI:
         #remove the current position from the list of possible moves
         if current_pos in possible:
             possible.remove(current_pos)
+        possible = {pos for pos in possible if pos not in occupied}
         return possible
 
     def move_towards(self, current: Tuple[int, int], target: Tuple[int, int]) -> Tuple[int, int]:
@@ -261,7 +267,8 @@ class BattleAI:
 
         return (cur_x + step_x, cur_y + step_y)
     
-    def _approach_and_optimize_move(self, character: Character, enemy:Character, grid_size: tuple) -> Tuple[int, int]:
+    def _approach_and_optimize_move(self, character: Character, enemy:Character, 
+                                      grid_size: tuple) -> Tuple[int, int]:
         """
         Always try to close the distance toward the nearest enemy.
         If the enemy is far (more than attack_range + buffer), move directly toward it.
