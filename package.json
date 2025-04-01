@@ -1,0 +1,22 @@
+{
+  "name": "legacy-react-vite-tailwindtailwind",
+  "description": "React + Vite + Tailwind (no Anchor)",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "ci": "npm run build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "bs58": "^6.0.0",
+    "tweetnacl": "^1.0.3"
+  },
+  "devDependencies": {
+    
+  }
+}
