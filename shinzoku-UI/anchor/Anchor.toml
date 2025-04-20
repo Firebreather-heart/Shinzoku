@@ -1,13 +1,13 @@
 [toolchain]
-anchor_version = "0.30.1"
+anchor_version = "0.31.0"
 
 [features]
 resolution = true
 skip-lint = false
 
 [programs.localnet]
-basic = "CzUzcq9aXvAKs13pVo7fEkQeALH5QrYprWgmX6L9wYxC"
-nft_minter = "8F3L6xycR2YLqCZX5ZQCT8ENAXjqyr6KWLkv5cUeMzL8"
+basic = "DtyzpaduKkwBWjYdsZA1b87hQXfBEx7V3LfCuAsuqUty"
+nft_minter = "4QkQ9D3dVJTf9N9GgJuLhPHzHPYnGygnWxjuXu8bCZLe"
 
 [registry]
 url = "https://api.apr.dev"
