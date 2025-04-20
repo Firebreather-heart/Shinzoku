@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Earth-like Fantasy Kingdom Map</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #1a1a2e;
+                color: #e6e6e6;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                min-height: 100vh;
+                padding: 20px;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 1000px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            h1 {
+                color: #ffd700;
+                text-align: center;
+                margin-bottom: 10px;
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            }
+
+            .stats {
+                background-color: #2a2a4a;
+                padding: 10px 20px;
+                border-radius: 10px;
+                margin-bottom: 15px;
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+                max-width: 600px;
+            }
+
+            .controls {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            button {
+                padding: 10px 16px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: all 0.2s;
+                font-size: 14px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            }
+
+            .spawn-kingdom {
+                background-color: #4b7bec;
+                color: white;
+            }
+
+            .spawn-dungeon {
+                background-color: #a55eea;
+                color: white;
+            }
+
+            .time-button {
+                background-color: #ff9f43;
+                color: white;
+            }
+
+            .reset-button {
+                background-color: #ee5253;
+                color: white;
+            }
+
+            button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+            }
+
+            button:active {
+                transform: translateY(0);
+            }
+
+            .time-controls {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            .message {
+                background-color: #2a2a4a;
+                padding: 10px 15px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                text-align: center;
+                width: 100%;
+                max-width: 800px;
+                border-left: 4px solid #4b7bec;
+            }
+
+            .map-container {
+                position: relative;
+                width: 100%;
+                max-width: 900px;
+                height: 550px;
+                overflow: auto;
+                border: 4px solid #654321;
+                border-radius: 8px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            }
+
+            svg {
+                background-color: #1d3557;
+            }
+
+            .kingdom-details {
+                background-color: #2a2a4a;
+                padding: 15px;
+                border-radius: 8px;
+                margin-top: 15px;
+                width: 100%;
+                max-width: 800px;
+                display: none;
+                border-top: 3px solid gold;
+            }
+
+            .kingdom-details h3 {
+                margin-top: 0;
+            }
+
+            .details-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .details-grid p {
+                margin: 8px 0;
+            }
+
+            .sun {
+                fill: #ffcc33;
+                filter: drop-shadow(0 0 10px rgba(255, 204, 51, 0.8));
+            }
+
+            .moon {
+                fill: #f5f5f5;
+                filter: drop-shadow(0 0 8px rgba(200, 200, 255, 0.8));
+            }
+
+            .star {
+                fill: white;
+                opacity: 0.8;
+            }
+
+            .loading {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                flex-direction: column;
+                color: white;
+            }
+
+            .loading-spinner {
+                border: 6px solid rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                border-top: 6px solid #ffd700;
+                width: 50px;
+                height: 50px;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            #time-slider {
+                width: 100%;
+                max-width: 300px;
+                margin: 0 10px;
+            }
+
+            .day-night-indicator {
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 3px 8px;
+                border-radius: 12px;
+                font-size: 14px;
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+
+            #congestion {
+                color: white;
+                font-weight: bold;
+            }
+
+            /* Add visual warning when congestion is high */
+            #congestion.high {
+                color: #ff4757;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <p>Generating your world...</p>
+        </div>
+
+        <div class="container">
+            <h1>Fantasy Earth Kingdom Map</h1>
+
+            <div class="stats">
+                <div>World Age: <span id="world-age">0</span> years</div>
+                <div>Time: <span id="world-time">Dawn</span></div>
+                <div>Kingdoms: <span id="kingdom-count">0</span></div>
+                <div>Congestion: <span id="congestion">0%</span></div>
+            </div>
+
+            <div class="controls">
+                <button class="spawn-kingdom" id="spawn-kingdom">Spawn New Kingdom</button>
+                <button class="spawn-dungeon" id="spawn-dungeon">Spawn Dungeons</button>
+                <button class="time-button" id="advance-time">Advance 10 Years</button>
+                <button class="reset-button" id="reset-world">Reset World</button>
+            </div>
+
+            <div class="time-controls">
+                <label for="time-slider">Day/Night Cycle:</label>
+                <input type="range" id="time-slider" min="0" max="23" value="6">
+                <button id="toggle-cycle" class="time-button">Auto Cycle</button>
+            </div>
+
+            <div class="message" id="message">Welcome to your fantasy world! Begin by spawning a kingdom.</div>
+
+            <div class="map-container">
+                <div class="day-night-indicator" id="day-night-indicator">🌞 Day</div>
+                <svg id="map" width="1200" height="800"></svg>
+            </div>
+
+            <div class="kingdom-details" id="kingdom-details">
+                <h3 id="kingdom-name">Kingdom Name</h3>
+                <div class="details-grid">
+                    <div>
+                        <p><strong>Population:</strong> <span id="kingdom-population">0</span></p>
+                        <p><strong>Age:</strong> <span id="kingdom-age">0</span> years</p>
+                    </div>
+                    <div>
+                        <p><strong>Wealth:</strong> <span id="kingdom-wealth">★★★</span></p>
+                        <p><strong>Capital:</strong> <span id="kingdom-capital">City Name</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Wait for initial load
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                }, 1000);
+            });
+
+            // Constants and initial setup
+            const svg = document.getElementById('map');
+            const NS = "http://www.w3.org/2000/svg";
+            const mapWidth = 1200;
+            const mapHeight = 800;
+            let worldAge = 0;
+            let kingdoms = [];
+            let dungeons = [];
+            let selectedKingdom = null;
+            let dayNightCycle = 6; // 0-23 hours
+            let autoCycleInterval = null;
+            let nextKingdomId = 1;
+
+            // Add these constants at the top with other constants
+            const INITIAL_MAP_WIDTH = 1200;
+            const INITIAL_MAP_HEIGHT = 800;
+            const CONGESTION_THRESHOLD = 0.6; // 60% congestion triggers expansion
+
+            // Add congestion tracking
+            let currentCongestion = 0;
+            let mapScale = 1;
+
+            // Define terrain colors for Earth-like map
+            const terrainColors = {
+                deepOcean: '#0a2463',
+                ocean: '#1a4b91',
+                shallowWater: '#2a6faf',
+                sand: '#e3d18a',
+                grass: '#588157',
+                forest: '#3a5a40',
+                mountain: '#6e6a61',
+                snow: '#f0f0f0'
+            };
+
+            // Create gradient for sky
+            function createSkyGradient() {
+                const defs = document.createElementNS(NS, "defs");
+                svg.appendChild(defs);
+
+                // Day gradient
+                const dayGradient = document.createElementNS(NS, "linearGradient");
+                dayGradient.setAttribute("id", "skyGradient");
+                dayGradient.setAttribute("x1", "0%");
+                dayGradient.setAttribute("y1", "0%");
+                dayGradient.setAttribute("x2", "0%");
+                dayGradient.setAttribute("y2", "100%");
+                defs.appendChild(dayGradient);
+
+                // Day gradient stops
+                const stops = [
+                    { offset: "0%", color: "#87CEEB" },
+                    { offset: "100%", color: "#1a4b91" }
+                ];
+
+                stops.forEach(stop => {
+                    const stopEl = document.createElementNS(NS, "stop");
+                    stopEl.setAttribute("offset", stop.offset);
+                    stopEl.setAttribute("stop-color", stop.color);
+                    dayGradient.appendChild(stopEl);
+                });
+
+                // Apply gradient to background
+                const background = document.createElementNS(NS, "rect");
+                background.setAttribute("width", mapWidth);
+                background.setAttribute("height", mapHeight);
+                background.setAttribute("fill", "url(#skyGradient)");
+                background.setAttribute("id", "sky");
+                svg.appendChild(background);
+            }
+
+            // Create Earth-like terrain
+            function createTerrain() {
+                // Generate larger continents with more natural shapes
+                const continentPaths = [
+                    // Main continent (larger)
+                    `M300,200 C400,150 500,180 600,200 S700,250 800,300 S850,400 800,500 
+                     S700,550 600,580 S450,600 350,550 S250,450 200,350 S250,250 300,200 Z`,
+                    
+                    // Secondary continent
+                    `M750,450 C800,400 850,400 900,450 S920,500 900,550 S850,580 800,550 
+                     S700,500 750,450 Z`,
+                    
+                    // Island chain
+                    `M150,500 C200,480 250,500 280,550 S250,600 200,580 S100,520 150,500 Z`
+                ];
+
+                // Create continents with gradients
+                continentPaths.forEach((path, index) => {
+                    const continent = document.createElementNS(NS, "path");
+                    continent.setAttribute("d", path);
+                    continent.setAttribute("fill", terrainColors.grass);
+                    continent.setAttribute("stroke", terrainColors.sand);
+                    continent.setAttribute("stroke-width", "8");
+                    svg.appendChild(continent);
+                });
+            }
+
+            function addMountains(continentIndex) {
+                const mountainRanges = [
+                    { x: 400, y: 300, length: 200, angle: 45 },
+                    { x: 600, y: 400, length: 150, angle: -30 },
+                    { x: 300, y: 450, length: 180, angle: 15 }
+                ];
+
+                mountainRanges.forEach(range => {
+                    const mountainCount = Math.floor(range.length / 30);
+                    for (let i = 0; i < mountainCount; i++) {
+                        const progress = i / mountainCount;
+                        const x = range.x + Math.cos(range.angle * Math.PI / 180) * range.length * progress;
+                        const y = range.y + Math.sin(range.angle * Math.PI / 180) * range.length * progress;
+                        
+                        const mountain = createMountain(x, y);
+                        svg.appendChild(mountain);
+                    }
+                });
+            }
+
+            function createMountain(x, y) {
+                const group = document.createElementNS(NS, "g");
+                const size = 20 + Math.random() * 10;
+                
+                // Main peak
+                const peak = document.createElementNS(NS, "path");
+                peak.setAttribute("d", `M${x},${y-size} L${x-size},${y+size} L${x+size},${y+size} Z`);
+                peak.setAttribute("fill", terrainColors.mountain);
+                peak.setAttribute("stroke", "#555");
+                peak.setAttribute("stroke-width", "1");
+                
+                // Snow cap
+                const snow = document.createElementNS(NS, "path");
+                snow.setAttribute("d", `M${x},${y-size} L${x-size/2},${y-size/2} L${x+size/2},${y-size/2} Z`);
+                snow.setAttribute("fill", terrainColors.snow);
+                
+                group.appendChild(peak);
+                group.appendChild(snow);
+                return group;
+            }
+
+            function addForests(continentIndex) {
+                const forestsCount = 5 + Math.floor(Math.random() * 7);
+                const continentCenters = [
+                    { x: 300, y: 300 }, // North America
+                    { x: 350, y: 600 }, // South America
+                    { x: 700, y: 400 }, // Europe/Africa
+                    { x: 950, y: 600 }  // Australia
+                ];
+
+                const center = continentCenters[continentIndex];
+                const spreadX = continentIndex === 0 ? 300 : 150;
+                const spreadY = continentIndex === 2 ? 300 : 150;
+
+                for (let i = 0; i < forestsCount; i++) {
+                    const forestX = center.x - spreadX / 2 + Math.random() * spreadX;
+                    const forestY = center.y - spreadY / 2 + Math.random() * spreadY;
+                    const forestSize = 15 + Math.random() * 25;
+
+                    const forest = document.createElementNS(NS, "circle");
+                    forest.setAttribute("cx", forestX);
+                    forest.setAttribute("cy", forestY);
+                    forest.setAttribute("r", forestSize);
+                    forest.setAttribute("fill", terrainColors.forest);
+                    forest.setAttribute("fill-opacity", "0.8");
+
+                    svg.appendChild(forest);
+                }
+            }
+
+            // Add celestial objects (sun, moon, stars)
+            function createCelestialObjects() {
+                // Create sun
+                const sun = document.createElementNS(NS, "circle");
+                sun.setAttribute("id", "sun");
+                sun.setAttribute("r", "30");
+                sun.setAttribute("class", "sun");
+                svg.appendChild(sun);
+
+                // Create moon
+                const moon = document.createElementNS(NS, "circle");
+                moon.setAttribute("id", "moon");
+                moon.setAttribute("r", "25");
+                moon.setAttribute("class", "moon");
+                svg.appendChild(moon);
+
+                // Create stars (will be visible at night)
+                for (let i = 0; i < 100; i++) {
+                    const x = Math.random() * mapWidth;
+                    const y = Math.random() * mapHeight * 0.6; // Only in upper part of sky
+                    const size = 0.5 + Math.random() * 1.5;
+
+                    const star = document.createElementNS(NS, "circle");
+                    star.setAttribute("cx", x);
+                    star.setAttribute("cy", y);
+                    star.setAttribute("r", size);
+                    star.setAttribute("class", "star");
+                    star.setAttribute("opacity", "0"); // Start invisible
+                    star.setAttribute("id", "star-" + i);
+                    svg.appendChild(star);
+                }
+            }
+
+            // Kingdom name generator
+            function generateKingdomName() {
+                const prefixes = ['North', 'South', 'East', 'West', 'New', 'Old', 'Great', 'High', 'Ancient', 'Royal', 'Golden', 'Silver', 'Emerald', 'Azure', 'Crimson', 'Imperial'];
+                const roots = ['land', 'heim', 'gard', 'fall', 'haven', 'vale', 'ford', 'ton', 'shire', 'wood', 'field', 'keep', 'hold', 'peak', 'dale', 'realm'];
+                const suffixes = ['ia', 'or', 'ium', 'ica', 'on', 'eros', 'aria', 'istan', 'oria', 'heim', 'mark', 'dom', 'topia'];
+
+                const usePrefix = Math.random() > 0.5;
+                const useSuffix = Math.random() > 0.5;
+
+                let name = '';
+                if (usePrefix) name += prefixes[Math.floor(Math.random() * prefixes.length)] + ' ';
+                name += roots[Math.floor(Math.random() * roots.length)].charAt(0).toUpperCase() + roots[Math.floor(Math.random() * roots.length)].slice(1);
+                if (useSuffix) name += suffixes[Math.floor(Math.random() * suffixes.length)];
+
+                return name;
+            }
+
+            // Generate city name for kingdom capitals
+            function generateCityName() {
+                const prefixes = ['Fort', 'Port', 'Saint', 'New', 'Old', 'North', 'South', 'East', 'West', 'Upper', 'Lower', 'Royal'];
+                const roots = ['York', 'London', 'Paris', 'Rome', 'Berlin', 'Athens', 'Madrid', 'Vienna', 'Prague', 'Cardiff', 'Dublin', 'Haven', 'Gate', 'Bridge', 'Castle', 'Town', 'City', 'Port', 'Ford', 'Crossing', 'Landing'];
+
+                const usePrefix = Math.random() > 0.7;
+
+                let name = '';
+                if (usePrefix) name += prefixes[Math.floor(Math.random() * prefixes.length)] + ' ';
+                name += roots[Math.floor(Math.random() * roots.length)];
+
+                return name;
+            }
+
+            // Generate castle-like shape for kingdom capital
+            function createCastle(x, y, color, scale = 1) {
+                const castleGroup = document.createElementNS(NS, "g");
+
+                // Main castle structure
+                const mainKeep = document.createElementNS(NS, "rect");
+                mainKeep.setAttribute("x", x - 15 * scale);
+                mainKeep.setAttribute("y", y - 25 * scale);
+                mainKeep.setAttribute("width", 30 * scale);
+                mainKeep.setAttribute("height", 35 * scale);
+                mainKeep.setAttribute("fill", color);
+                mainKeep.setAttribute("stroke", "#333");
+                mainKeep.setAttribute("stroke-width", scale);
+                castleGroup.appendChild(mainKeep);
+
+                // Castle towers (left and right)
+                const leftTower = document.createElementNS(NS, "rect");
+                leftTower.setAttribute("x", x - 25 * scale);
+                leftTower.setAttribute("y", y - 20 * scale);
+                leftTower.setAttribute("width", 10 * scale);
+                leftTower.setAttribute("height", 30 * scale);
+                leftTower.setAttribute("fill", color);
+                leftTower.setAttribute("stroke", "#333");
+                leftTower.setAttribute("stroke-width", scale);
+                castleGroup.appendChild(leftTower);
+
+                const rightTower = document.createElementNS(NS, "rect");
+                rightTower.setAttribute("x", x + 15 * scale);
+                rightTower.setAttribute("y", y - 20 * scale);
+                rightTower.setAttribute("width", 10 * scale);
+                rightTower.setAttribute("height", 30 * scale);
+                rightTower.setAttribute("fill", color);
+                rightTower.setAttribute("stroke", "#333");
+                rightTower.setAttribute("stroke-width", scale);
+                castleGroup.appendChild(rightTower);
+
+                // Tower tops (crenellations)
+                for (let parts of [
+                    { tower: leftTower, offsetX: -25 },
+                    { tower: mainKeep, offsetX: -15 },
+                    { tower: rightTower, offsetX: 15 }
+                ]) {
+                    for (let i = 0; i < 5; i++) {
+                        const width = parts.tower === mainKeep ? 6 * scale : 2 * scale;
+                        const spacing = parts.tower === mainKeep ? 6 * scale : 2 * scale;
+                        const merlon = document.createElementNS(NS, "rect");
+                        merlon.setAttribute("x", x + parts.offsetX * scale + i * (width + spacing));
+                        merlon.setAttribute("y", (parts.tower === mainKeep ? y - 30 : y - 25) * scale);
+                        merlon.setAttribute("width", width);
+                        merlon.setAttribute("height", 5 * scale);
+                        merlon.setAttribute("fill", color);
+                        merlon.setAttribute("stroke", "#333");
+                        merlon.setAttribute("stroke-width", scale * 0.5);
+                        castleGroup.appendChild(merlon);
+                    }
+                }
+
+                // Castle door
+                const door = document.createElementNS(NS, "rect");
+                door.setAttribute("x", x - 5 * scale);
+                door.setAttribute("y", y - 5 * scale);
+                door.setAttribute("width", 10 * scale);
+                door.setAttribute("height", 15 * scale);
+                door.setAttribute("fill", "#5c4033");
+                door.setAttribute("stroke", "#333");
+                door.setAttribute("stroke-width", scale * 0.5);
+                castleGroup.appendChild(door);
+
+                // Windows
+                for (let wx = -10; wx <= 10; wx += 10) {
+                    const window = document.createElementNS(NS, "rect");
+                    window.setAttribute("x", x + wx * scale);
+                    window.setAttribute("y", y - 15 * scale);
+                    window.setAttribute("width", 5 * scale);
+                    window.setAttribute("height", 5 * scale);
+                    window.setAttribute("fill", "#7ec8e3");
+                    window.setAttribute("stroke", "#333");
+                    window.setAttribute("stroke-width", scale * 0.5);
+                    castleGroup.appendChild(window);
+                }
+
+                // Flag
+                const flagpole = document.createElementNS(NS, "line");
+                flagpole.setAttribute("x1", x);
+                flagpole.setAttribute("y1", y - 35 * scale);
+                flagpole.setAttribute("x2", x);
+                flagpole.setAttribute("y2", y - 50 * scale);
+                flagpole.setAttribute("stroke", "#333");
+                flagpole.setAttribute("stroke-width", scale);
+                castleGroup.appendChild(flagpole);
+
+                const flag = document.createElementNS(NS, "polygon");
+                flag.setAttribute("points",
+                    `${x},${y - 50 * scale} 
+         ${x + 15 * scale},${y - 45 * scale} 
+         ${x},${y - 40 * scale}`);
+                flag.setAttribute("fill", color);
+                flag.setAttribute("stroke", "#333");
+                flag.setAttribute("stroke-width", scale * 0.5);
+                castleGroup.appendChild(flag);
+
+                return castleGroup;
+            }
+
+            // Generate dungeon entrance
+            function createDungeon(x, y, type) {
+                const dungeonGroup = document.createElementNS(NS, "g");
+                dungeonGroup.setAttribute("class", "dungeon");
+
+                // Base circle
+                const baseSize = type === 'boss' ? 20 : 16;
+                const base = document.createElementNS(NS, "circle");
+                base.setAttribute("cx", x);
+                base.setAttribute("cy", y);
+                base.setAttribute("r", baseSize);
+                base.setAttribute("fill", type === 'boss' ? "#8B0000" : "#4B0082");
+                base.setAttribute("stroke", "#000");
+                base.setAttribute("stroke-width", "2");
+                dungeonGroup.appendChild(base);
+
+                // Dungeon entrance (stone arch)
+                const archWidth = type === 'boss' ? 16 : 12;
+                const archHeight = type === 'boss' ? 20 : 16;
+
+                // Dark entrance
+                const entrance = document.createElementNS(NS, "path");
+                entrance.setAttribute("d", `M${x - archWidth / 2},${y + baseSize / 3} 
+                                 Q${x},${y - archHeight / 2} ${x + archWidth / 2},${y + baseSize / 3} 
+                                 L${x + archWidth / 2},${y + baseSize / 2} 
+                                 Q${x},${y + baseSize / 3} ${x - archWidth / 2},${y + baseSize / 2} Z`);
+                entrance.setAttribute("fill", "#000");
+                entrance.setAttribute("stroke", "#333");
+                entrance.setAttribute("stroke-width", "1");
+                dungeonGroup.appendChild(entrance);
+
+                // Stone arch outline
+                const arch = document.createElementNS(NS, "path");
+                arch.setAttribute("d", `M${x - archWidth / 2},${y + baseSize / 3} 
+                             Q${x},${y - archHeight / 2} ${x + archWidth / 2},${y + baseSize / 3}`);
+                arch.setAttribute("fill", "none");
+                arch.setAttribute("stroke", "#666");
+                arch.setAttribute("stroke-width", "3");
+                dungeonGroup.appendChild(arch);
+
+                // Stone blocks for arch
+                for (let i = 0; i < 5; i++) {
+                    const block = document.createElementNS(NS, "rect");
+                    block.setAttribute("x", x - archWidth / 2 + i * archWidth / 5);
+                    block.setAttribute("y", y + baseSize / 3 - 3);
+                    block.setAttribute("width", archWidth / 5);
+                    block.setAttribute("height", "3");
+                    block.setAttribute("fill", "#666");
+                    block.setAttribute("stroke", "#333");
+                    block.setAttribute("stroke-width", "0.5");
+                    dungeonGroup.appendChild(block);
+                }
+
+                // Symbol based on dungeon type
+                const symbol = document.createElementNS(NS, "text");
+                symbol.setAttribute("x", x);
+                symbol.setAttribute("y", y - baseSize / 4);
+                symbol.setAttribute("text-anchor", "middle");
+                symbol.setAttribute("alignment-baseline", "middle");
+                symbol.setAttribute("font-size", type === 'boss' ? "16" : "14");
+                symbol.setAttribute("fill", "#fff");
+                symbol.setAttribute("font-weight", "bold");
+                symbol.textContent = type === 'boss' ? "☠" : "⚔";
+                dungeonGroup.appendChild(symbol);
+
+                // Stone pillars
+                if (type === 'boss') {
+                    for (let side of [-1, 1]) {
+                        const pillar = document.createElementNS(NS, "rect");
+                        pillar.setAttribute("x", x + side * (archWidth / 2 + 3));
+                        pillar.setAttribute("y", y - archHeight / 2);
+                        pillar.setAttribute("width", "3");
+                        pillar.setAttribute("height", archHeight);
+                        pillar.setAttribute("fill", "#666");
+                        pillar.setAttribute("stroke", "#333");
+                        pillar.setAttribute("stroke-width", "0.5");
+                        dungeonGroup.appendChild(pillar);
+
+                        // Pillar top
+                        const top = document.createElementNS(NS, "rect");
+                        top.setAttribute("x", x + side * (archWidth / 2 + 4));
+                        top.setAttribute("y", y - archHeight / 2 - 3);
+                        top.setAttribute("width", "5");
+                        top.setAttribute("height", "3");
+                        top.setAttribute("fill", "#666");
+                        top.setAttribute("stroke", "#333");
+                        top.setAttribute("stroke-width", "0.5");
+                        dungeonGroup.appendChild(top);
+                    }
+                }
+
+                return dungeonGroup;
+            }
+
+            // Generate a unique polygon shape for kingdom territory
+            function generateKingdomShape(centerX, centerY, size) {
+                const points = [];
+                const numPoints = 8 + Math.floor(Math.random() * 4);
+
+                for (let i = 0; i < numPoints; i++) {
+                    const angle = (Math.PI * 2 * i) / numPoints;
+                    const radius = size * (0.7 + Math.random() * 0.5);
+                    const x = centerX + radius * Math.cos(angle);
+                    const y = centerY + radius * Math.sin(angle);
+                    points.push(`${x},${y}`);
+                }
+
+                return points.join(' ');
+            }
+
+            // Update day/night cycle
+            function updateDayNightCycle(hour) {
+                const sun = document.getElementById('sun');
+                const moon = document.getElementById('moon');
+                const sky = document.getElementById('sky');
+                const stars = document.querySelectorAll('.star');
+
+                // Calculate positions
+                const angle = (hour / 24) * Math.PI * 2 - Math.PI / 2;
+                const radius = mapHeight * 0.8;
+                const centerX = mapWidth / 2;
+                const centerY = mapHeight + radius * 0.3;
+
+                // Update sun position
+                const sunX = centerX + radius * Math.cos(angle);
+                const sunY = centerY + radius * Math.sin(angle);
+                sun.setAttribute('cx', sunX);
+                sun.setAttribute('cy', sunY);
+
+                // Update moon position (opposite to sun)
+                const moonX = centerX + radius * Math.cos(angle + Math.PI);
+                const moonY = centerY + radius * Math.sin(angle + Math.PI);
+                moon.setAttribute('cx', moonX);
+                moon.setAttribute('cy', moonY);
+
+                // Update sky color
+                const isDay = hour >= 6 && hour < 18;
+                const isDawn = hour >= 5 && hour < 7;
+                const isDusk = hour >= 17 && hour < 19;
+
+                let skyColor;
+                if (isDawn) {
+                    skyColor = '#FF7F50';
+                } else if (isDusk) {
+                    skyColor = '#FF6B6B';
+                } else if (isDay) {
+                    skyColor = '#87CEEB';
+                } else {
+                    skyColor = '#1a1a3a';
+                }
+
+                sky.setAttribute('fill', skyColor);
+
+                // Update star visibility
+                stars.forEach(star => {
+                    star.setAttribute('opacity', isDay ? '0' : '0.8');
+                });
+
+                // Update indicator
+                const indicator = document.getElementById('day-night-indicator');
+                indicator.textContent = isDay ? '🌞 Day' : '🌙 Night';
+            }
+
+            // Add event listeners
+            document.getElementById('time-slider').addEventListener('input', (e) => {
+                dayNightCycle = parseInt(e.target.value);
+                updateDayNightCycle(dayNightCycle);
+            });
+
+            document.getElementById('toggle-cycle').addEventListener('click', () => {
+                if (autoCycleInterval) {
+                    clearInterval(autoCycleInterval);
+                    autoCycleInterval = null;
+                    document.getElementById('toggle-cycle').textContent = 'Auto Cycle';
+                } else {
+                    // Update every minute instead of every second
+                    autoCycleInterval = setInterval(() => {
+                        syncWithRealTime();
+                    }, 60000); // Update every minute
+                    document.getElementById('toggle-cycle').textContent = 'Stop Cycle';
+                }
+            });
+
+            // Initialize map
+            createSkyGradient();
+            createTerrain();
+            createCelestialObjects();
+            updateDayNightCycle(dayNightCycle);
+
+            // Add initial message
+            document.getElementById('message').textContent = 'Welcome to your fantasy world! Begin by spawning a kingdom.';
+
+            // Optional: Sync with real-world time
+            function syncWithRealTime() {
+                const now = new Date();
+                dayNightCycle = now.getHours();
+                document.getElementById('time-slider').value = dayNightCycle;
+                updateDayNightCycle(dayNightCycle);
+                
+                // Update world time display
+                const timeStr = now.toLocaleTimeString();
+                document.getElementById('world-time').textContent = timeStr;
+            }
+
+            // Call syncWithRealTime() to initialize with real-world time
+            syncWithRealTime();
+
+            // Add this function to handle kingdom spawning
+            function spawnKingdom(x, y) {
+                const location = findValidSpawnLocation();
+                if (!location) {
+                    document.getElementById('message').textContent = 'No suitable location found for new kingdom!';
+                    return;
+                }
+
+                // Use validated location
+                const kingdom = {
+                    id: nextKingdomId++,
+                    name: generateKingdomName(),
+                    capital: generateCityName(),
+                    population: Math.floor(Math.random() * 500000) + 100000,
+                    wealth: Math.floor(Math.random() * 5) + 1,
+                    age: 0,
+                    x: location.x,
+                    y: location.y
+                };
+                
+                // Create kingdom territory and castle as before
+                const territory = document.createElementNS(NS, "polygon");
+                territory.setAttribute("points", generateKingdomShape(kingdom.x, kingdom.y, 50));
+                territory.setAttribute("fill", `hsl(${Math.random() * 360}, 70%, 70%)`);
+                territory.setAttribute("fill-opacity", "0.3");
+                territory.setAttribute("stroke", "#333");
+                territory.setAttribute("stroke-width", "2");
+                svg.appendChild(territory);
+
+                // Add castle
+                const castle = createCastle(kingdom.x, kingdom.y, "#d4af37");
+                svg.appendChild(castle);
+
+                kingdoms.push(kingdom);
+                updateKingdomCount();
+                showKingdomDetails(kingdom);
+
+                calculateCongestion();
+                if (currentCongestion >= CONGESTION_THRESHOLD) {
+                    expandWorld();
+                }
+            }
+
+            // Add event listener for the spawn kingdom button
+            document.getElementById('spawn-kingdom').addEventListener('click', () => {
+                spawnKingdom();
+                document.getElementById('message').textContent = `A new kingdom has risen: ${kingdoms[kingdoms.length - 1].name}!`;
+            });
+
+            // Update kingdom count display
+            function updateKingdomCount() {
+                document.getElementById('kingdom-count').textContent = kingdoms.length;
+            }
+
+            function spawnDungeons() {
+                const dungeonCount = Math.floor(Math.random() * 3) + 2;
+                let spawned = 0;
+                
+                for (let i = 0; i < dungeonCount; i++) {
+                    const location = findValidSpawnLocation();
+                    if (location) {
+                        const type = Math.random() > 0.8 ? 'boss' : 'normal';
+                        const dungeon = createDungeon(location.x, location.y, type);
+                        svg.appendChild(dungeon);
+                        dungeons.push({ x: location.x, y: location.y, type });
+                        spawned++;
+                    }
+                }
+                
+                document.getElementById('message').textContent = 
+                    spawned > 0 ? `${spawned} new dungeons have appeared!` : 'No suitable locations for new dungeons!';
+
+                calculateCongestion();
+                if (currentCongestion >= CONGESTION_THRESHOLD) {
+                    expandWorld();
+                }
+            }
+
+            // Add event listener for dungeon spawning
+            document.getElementById('spawn-dungeon').addEventListener('click', spawnDungeons);
+
+            function showKingdomDetails(kingdom) {
+                const detailsDiv = document.getElementById('kingdom-details');
+                document.getElementById('kingdom-name').textContent = kingdom.name;
+                document.getElementById('kingdom-population').textContent = kingdom.population.toLocaleString();
+                document.getElementById('kingdom-age').textContent = kingdom.age;
+                document.getElementById('kingdom-capital').textContent = kingdom.capital;
+                
+                // Display wealth as stars
+                const wealthStars = '★'.repeat(kingdom.wealth) + '☆'.repeat(5 - kingdom.wealth);
+                document.getElementById('kingdom-wealth').textContent = wealthStars;
+                
+                // Show the details div
+                detailsDiv.style.display = 'block';
+            }
+
+            function isValidLocation(x, y, radius) {
+                // Check distance from other kingdoms
+                for (const kingdom of kingdoms) {
+                    const distance = Math.sqrt(Math.pow(kingdom.x - x, 2) + Math.pow(kingdom.y - y, 2));
+                    if (distance < radius * 3) return false;
+                }
+                
+                // Check distance from dungeons
+                for (const dungeon of dungeons) {
+                    const distance = Math.sqrt(Math.pow(dungeon.x - x, 2) + Math.pow(dungeon.y - y, 2));
+                    if (distance < radius * 2) return false;
+                }
+                
+                return true;
+            }
+
+            function findValidSpawnLocation() {
+                let attempts = 0;
+                const maxAttempts = 100; // Increase maximum attempts
+                
+                while (attempts < maxAttempts) {
+                    const x = Math.random() * (mapWidth - 100) + 50;
+                    const y = Math.random() * (mapHeight - 100) + 50;
+                    
+                    if (isValidLocation(x, y, 50)) {
+                        return { x, y };
+                    }
+                    attempts++;
+                    
+                    // If we're running out of attempts, trigger expansion
+                    if (attempts === maxAttempts - 1) {
+                        expandWorld();
+                        // Reset attempts to try again in expanded world
+                        attempts = 0;
+                    }
+                }
+                return null;
+            }
+
+            function resetWorld() {
+                // Clear existing elements
+                while (svg.firstChild) {
+                    svg.removeChild(svg.firstChild);
+                }
+                
+                // Reset variables
+                kingdoms = [];
+                dungeons = [];
+                worldAge = 0;
+                nextKingdomId = 1;
+                
+                // Reinitialize the world
+                createSkyGradient();
+                createTerrain();
+                createCelestialObjects();
+                updateDayNightCycle(dayNightCycle);
+                
+                // Update UI
+                document.getElementById('world-age').textContent = '0';
+                document.getElementById('kingdom-count').textContent = '0';
+                document.getElementById('kingdom-details').style.display = 'none';
+                document.getElementById('message').textContent = 'The world has been reset. Begin anew by spawning a kingdom.';
+            }
+
+            // Add event listener for reset button
+            document.getElementById('reset-world').addEventListener('click', resetWorld);
+
+            // Add this function to calculate congestion
+            function calculateCongestion() {
+                const totalArea = mapWidth * mapHeight;
+                const usedArea = kingdoms.length * Math.PI * Math.pow(100, 2) + // Kingdom area
+                                 dungeons.length * Math.PI * Math.pow(50, 2);   // Dungeon area
+                
+                currentCongestion = usedArea / totalArea;
+                
+                // Update congestion display
+                document.getElementById('congestion').textContent = 
+                    `${(currentCongestion * 100).toFixed(1)}%`;
+                    
+                return currentCongestion;
+            }
+
+            // Add this function to handle world expansion
+            function expandWorld() {
+                if (currentCongestion >= CONGESTION_THRESHOLD) {
+                    // Update map dimensions
+                    mapScale *= 1.2;
+                    mapWidth = INITIAL_MAP_WIDTH * mapScale;
+                    mapHeight = INITIAL_MAP_HEIGHT * mapScale;
+                    
+                    // Create new SVG with expanded dimensions
+                    const newSvg = document.createElementNS(NS, "svg");
+                    newSvg.setAttribute('width', mapWidth);
+                    newSvg.setAttribute('height', mapHeight);
+                    newSvg.setAttribute('id', 'map');
+                    
+                    // Generate new terrain for expanded areas
+                    createSkyGradient(newSvg);
+                    createExpandedTerrain(newSvg);
+                    createCelestialObjects(newSvg);
+                    
+                    // Scale and transfer existing elements
+                    const worldGroup = document.createElementNS(NS, "g");
+                    while (svg.firstChild) {
+                        const clone = svg.firstChild.cloneNode(true);
+                        worldGroup.appendChild(clone);
+                        svg.removeChild(svg.firstChild);
+                    }
+                    
+                    // Replace old SVG with new one
+                    svg.parentNode.replaceChild(newSvg, svg);
+                    svg = newSvg;
+                    svg.appendChild(worldGroup);
+                    
+                    // Update map container scroll position
+                    const mapContainer = document.querySelector('.map-container');
+                    mapContainer.scrollTo(
+                        (mapWidth - INITIAL_MAP_WIDTH) / 2,
+                        (mapHeight - INITIAL_MAP_HEIGHT) / 2
+                    );
+                    
+                    // Update congestion calculation
+                    calculateCongestion();
+                    
+                    document.getElementById('message').textContent = 
+                        'The world has expanded! New lands await exploration...';
+                }
+            }
+
+            // Add function to create terrain for expanded areas
+            function createExpandedTerrain(targetSvg) {
+                const continentCount = Math.floor(mapScale);
+                const continents = [];
+                
+                for (let i = 0; i < continentCount; i++) {
+                    const x = INITIAL_MAP_WIDTH + Math.random() * (mapWidth - INITIAL_MAP_WIDTH);
+                    const y = Math.random() * mapHeight;
+                    const size = 100 + Math.random() * 200;
+                    
+                    const continent = document.createElementNS(NS, "path");
+                    const path = generateContinentPath(x, y, size);
+                    continent.setAttribute("d", path);
+                    continent.setAttribute("fill", terrainColors.grass);
+                    continent.setAttribute("stroke", terrainColors.sand);
+                    continent.setAttribute("stroke-width", "8");
+                    targetSvg.appendChild(continent);
+                    
+                    continents.push({ x, y, size });
+                }
+                
+                // Add features to new continents
+                continents.forEach((continent, index) => {
+                    addMountains(targetSvg, continent);
+                    addForests(targetSvg, continent);
+                });
+            }
+
+            // Helper function to generate continent paths
+            function generateContinentPath(centerX, centerY, size) {
+                const points = [];
+                const numPoints = 12;
+                
+                for (let i = 0; i < numPoints; i++) {
+                    const angle = (Math.PI * 2 * i) / numPoints;
+                    const radius = size * (0.7 + Math.random() * 0.5);
+                    const x = centerX + radius * Math.cos(angle);
+                    const y = centerY + radius * Math.sin(angle);
+                    
+                    if (i === 0) {
+                        points.push(`M${x},${y}`);
+                    } else {
+                        const cp1x = centerX + radius * Math.cos(angle - Math.PI/6);
+                        const cp1y = centerY + radius * Math.sin(angle - Math.PI/6);
+                        points.push(`Q${cp1x},${cp1y} ${x},${y}`);
+                    }
+                }
+                
+                points.push('Z');
+                return points.join(' ');
+            }
+        </script>
+    </body>
+
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fantasy World Map</title>
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        #gameContainer {
+            margin: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .controls {
+            margin: 15px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 0 10px;
+            cursor: pointer;
+            background: #3498db;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        #stats {
+            color: white;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer"></div>
+    <div class="controls">
+        <button id="spawnKingdom">Spawn Kingdom</button>
+        <button id="spawnDungeons">Spawn Dungeons</button>
+    </div>
+    <div id="stats">Kingdoms: 0 | Dungeons: 0</div>
+</body>
+</html>
