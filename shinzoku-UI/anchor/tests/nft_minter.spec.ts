@@ -4,11 +4,14 @@ import {
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import * as anchor from "@coral-xyz/anchor";
+import { Keypair } from "@solana/web3.js";
+import type { NftMinter } from "../target/types/nft_minter";
 
 describe("NFT Minter", () => {
   const payer = pg.wallet;
 
-  const metadata = {
+  const metadata1 = {
     name: "Homer NFT",
     symbol: "HOMR",
     uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json",
@@ -53,7 +56,7 @@ describe("NFT Minter", () => {
     });
 
     const txSig = await pg.program.methods
-      .mintNft(metadata.name, metadata.symbol, metadata.uri)
+      .mintNft(metadata1.name, metadata1.symbol, metadata1.uri)
       .accounts({
         payer: payer.publicKey,
         mintAccount: mintKeypair.publicKey,
@@ -75,12 +78,6 @@ describe("NFT Minter", () => {
   });
 });
 
-
-import * as anchor from "@coral-xyz/anchor";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
-import { Keypair } from "@solana/web3.js";
-import type { NftMinter } from "../target/types/nft_minter";
-
 describe("NFT Minter", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
@@ -94,7 +91,7 @@ describe("NFT Minter", () => {
     uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json",
   };
 
-  it("Create an NFT!", async () => {
+  it("Mints an NFT!", async () => {
     // Generate a keypair to use as the address of our mint account
     const mintKeypair = new Keypair();
 
