@@ -62,7 +62,7 @@ export function WalletDisconnectButton({ className }: { className?: string }) {
       </button>
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-          <div className="bg-gray-800 text-white p-6 rounded-xl shadow-xl max-w-sm w-full border border-[#3b82f6]">
+          <div className="bg-gray-800 text-white p-6 rounded-xl shadow-xl max-w-sm w-full border border-[#d3af37]">
             <h2 className="text-xl font-bold mb-4 text-center">Disconnect Wallet</h2>
             <p className="mb-6 text-center">
               Are you sure you want to disconnect your wallet?

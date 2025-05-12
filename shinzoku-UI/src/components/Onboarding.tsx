@@ -19,16 +19,24 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   const gameIntroSlides: Slide[] = [
     {
-      text: "In a distant future, a war-torn land seeks heroes to restore balance...",
+      text: "In the days of old, the world thrived, life thrived and powerful creatures were born, then it happened, a great invasion the likes of which the world had never seen before...",
       image: "/images/slide1.jpg",
     },
     {
-      text: "Ancient warriors awaken to fight for control of mystical gemstones...",
+      text: "A new world formed, with it the era of men, with new kyo, they fought, bled and amassed treasures ...",
       image: "/images/slide2.jpg",
     },
     {
-      text: "Your journey begins now. Will you rise as a legend?",
+      text: "In the midst of this chaos, powers from beyond this world set their gaze once more upon this world, while the celestial mandate increased in strength",
       image: "/images/slide3.jpg",
+    },
+    {
+      text: "You are a chosen one, with a unique and potent kyo, you have the power to change the world, to bring peace or destruction, the choice is yours...",
+      image: "/images/slide4.jpg",
+    },
+    {
+      text: "Every battle is a piece of the puzzle, fight, bleed, grow your purse and army, and become the strongest in the world...",
+      image: "/images/slide5.jpg",
     },
   ];
 
@@ -39,8 +47,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white p-6">
-      <div className="bg-[#121826] shadow-2xl rounded-2xl p-8 w-full max-w-md text-center border border-[#d3af37]">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white p-6 overflow-hidden">
+      <div className="w-full max-w-md text-center 
+                      bg-transparent lg:bg-[#121826] lg:shadow-2xl lg:rounded-2xl lg:p-8 lg:border lg:border-[#d3af37]">
         {step === 0 && (
           <div>
             <h2 className="text-2xl font-bold text-[#f5f5dc]">
@@ -78,23 +87,34 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               transition={{ duration: 0.5 }}
               className="animate-fade-in"
             >
-              <div className="flex justify-center mb-4">
+              {/* Image container */}
+              <div className="relative mb-4 mx-auto">
                 <Image
                   src={gameIntroSlides[step - 1].image}
                   alt={`Slide ${step}`}
                   width={300}
                   height={200}
-                  className="rounded-md shadow-md"
+                  className="rounded-md shadow-md w-full filter brightness-75 mx-auto"
                 />
               </div>
-              <h2 className="text-xl font-semibold">
-                {gameIntroSlides[step - 1].text}
-              </h2>
+              {/* Text container below the image */}
+              <div className="px-4 py-2">
+                <h2 className="text-xl font-semibold">
+                  {gameIntroSlides[step - 1].text}
+                </h2>
+              </div>
               <button
-                className="mt-6 px-6 py-2 bg-[#3b82f6] hover:bg-[#2563eb] text-lg rounded-lg"
+                className="mt-6 inline-flex items-center gap-2 px-6 py-2 bg-[#b87333] hover:bg-[#cd7f32] text-white text-lg rounded-lg shadow-lg transition-all duration-300"
                 onClick={() => setStep(step + 1)}
               >
                 Next
+                <svg
+                  className="w-5 h-5 transform rotate-45"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M2 12l20-10v20L2 12z" />
+                </svg>
               </button>
             </motion.div>
           )}
@@ -109,19 +129,15 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               transition={{ duration: 0.5 }}
               className="animate-fade-in"
             >
-              <h2 className="text-2xl font-bold text-[#3b82f6]">
+              <h2 className="text-3xl font-bold text-[#d3af37]">
                 Welcome, {playerName}!
               </h2>
-              <p className="mt-2 text-gray-400">Your adventure starts now.</p>
-              <Image
-                src="/images/start-game.png"
-                alt="Game Start"
-                width={200}
-                height={200}
-                className="mx-auto my-4"
-              />
+              <p className="mt-4 text-lg text-gray-300">
+                Prepare yourself for an epic adventure in the realm of Shinzoku.
+              </p>
+              {/* Removed the start-game image */}
               <button
-                className="mt-6 px-6 py-2 bg-green-500 hover:bg-green-600 text-lg rounded-lg"
+                className="mt-8 px-8 py-3 bg-gradient-to-r from-[#b87333] to-[#cd7f32] hover:from-[#cd7f32] hover:to-[#b87333] text-2xl font-bold rounded-full shadow-xl transition-all duration-300"
                 onClick={onComplete}
               >
                 Start Game
