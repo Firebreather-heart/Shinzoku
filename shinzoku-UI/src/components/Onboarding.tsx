@@ -47,7 +47,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white p-6 overflow-hidden">
       <div className="w-full max-w-md text-center 
                       bg-transparent lg:bg-[#121826] lg:shadow-2xl lg:rounded-2xl lg:p-8 lg:border lg:border-[#d3af37]">
         {step === 0 && (
