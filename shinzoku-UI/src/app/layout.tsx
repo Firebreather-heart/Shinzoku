@@ -1,8 +1,8 @@
 import './globals.css'
-import {ClusterProvider} from '@/components/cluster/cluster-data-access'
-import {SolanaProvider} from '@/components/solana/solana-provider'
-// import {UiLayout} from '@/components/ui/ui-layout'
-import {ReactQueryProvider} from './react-query-provider'
+import { ClusterProvider } from '@/components/cluster/cluster-data-access'
+import { SolanaProvider } from '@/components/solana/solana-provider'
+import { ReactQueryProvider } from './react-query-provider'
+import Header from '@/components/Header' // <-- Import Header
 
 export const metadata = {
   title: 'Shinzoku',
@@ -22,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ReactQueryProvider>
           <ClusterProvider>
             <SolanaProvider>
+              <Header /> {/* Render the header with disconnect button */}
               {children}
             </SolanaProvider>
           </ClusterProvider>
