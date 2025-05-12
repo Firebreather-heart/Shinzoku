@@ -3,7 +3,7 @@ import AnimatedHeartLogo from "./AnimatedLogo";
 
 export default function WalletConnect() {
   return (
-    <div className="h-[100svh] flex flex-col items-center justify-center bg-black text-gold-500 p-6">
+    <div className="h-[100svh] flex flex-col items-center justify-center  text-gold-500 p-6">
       {/* Pierced Heart Logo */}
 
       {/* Wallet Connect Box */}
