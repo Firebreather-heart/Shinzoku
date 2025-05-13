@@ -1,14 +1,13 @@
-'use client'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletDisconnectButton } from './solana/solana-provider'
+'use client';
+
+import { WalletDisconnectButton } from "./solana/solana-provider";
 
 export default function Header() {
-  const { publicKey } = useWallet()
-  if (!publicKey) return null
-
   return (
-    <header className="absolute top-4 right-4 z-50">
-      <WalletDisconnectButton />
-    </header>
-  )
+    <div className="w-full bg-[#0f172a] border-b border-[#d3af37]/30 py-2">
+      <div className="max-w-6xl mx-auto px-4 flex justify-end">
+        <WalletDisconnectButton />
+      </div>
+    </div>
+  );
 }

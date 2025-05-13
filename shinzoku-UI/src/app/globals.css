@@ -48,7 +48,29 @@ body {
 }
 
 .wallet-adapter-button {
+  width: 100% !important;
+  padding: 1rem !important;
+  font-size: clamp(1rem, 1.5vw, 1.25rem) !important;
+  justify-content: center !important;
   background-color: #d3af37 !important;
   border-color: #d3af37 !important;
   color: white !important;
+}
+
+.text-shadow-game {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5),
+               0 0 10px rgba(211, 175, 55, 0.5);
+}
+
+.text-shadow-light {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.glint-animation {
+  animation: glint 3s infinite;
+}
+
+@keyframes glint {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
