@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface InventoryItem {
   id: number;
@@ -23,7 +24,7 @@ export default function InventoryPanel() {
       description: "A fierce warrior from the shadow realm",
       type: "Melee",
       rarity: "rare",
-      image: "/images/char1.png",
+      image: "/images/char.png",
       level: 5,
       stats: {
         attack: 75,
@@ -37,7 +38,7 @@ export default function InventoryPanel() {
       description: "Master of the bow",
       type: "Range",
       rarity: "common",
-      image: "/images/char2.png",
+      image: "/images/char.png",
       level: 3,
       stats: {
         attack: 65,
@@ -54,7 +55,7 @@ export default function InventoryPanel() {
       description: "Restores 50 HP",
       type: "Consumable",
       rarity: "common",
-      image: "/images/potion1.png"
+      image: "/images/item.png"
     },
     {
       id: 4,
@@ -62,7 +63,7 @@ export default function InventoryPanel() {
       description: "+10 Attack",
       type: "Equipment",
       rarity: "rare",
-      image: "/images/crystal1.png"
+      image: "/images/item.png"
     }
   ];
 
@@ -83,8 +84,8 @@ export default function InventoryPanel() {
         <button
           onClick={() => setCategory('characters')}
           className={`px-6 py-3 rounded-lg transition-all duration-300 ${category === 'characters'
-              ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
-              : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
+            ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
+            : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
             }`}
         >
           Characters
@@ -92,8 +93,8 @@ export default function InventoryPanel() {
         <button
           onClick={() => setCategory('items')}
           className={`px-6 py-3 rounded-lg transition-all duration-300 ${category === 'items'
-              ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
-              : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
+            ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
+            : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
             }`}
         >
           Items
@@ -108,9 +109,11 @@ export default function InventoryPanel() {
           >
             <div className="aspect-square mb-4 relative overflow-hidden rounded-lg">
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-              <img
+              <Image
                 src={item.image}
                 alt={item.name}
+                width={64} // Set appropriate width
+                height={64} // Set appropriate height
                 className="w-full h-full object-cover"
               />
               {item.level && (

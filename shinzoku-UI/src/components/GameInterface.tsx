@@ -4,6 +4,8 @@ import { useState } from "react";
 import { IconArrowLeft, IconCoin } from "@tabler/icons-react";
 import AnimatedHeartLogo from "./AnimatedLogo";
 import CampaignMode from "./campaign/CampaignMode";
+import Shop from './Shop'
+import BattleSystem from './BattleSystem'
 
 export default function GameInterface() {
   const [activeTab, setActiveTab] = useState<

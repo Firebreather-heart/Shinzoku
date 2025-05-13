@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface ShopItem {
   id: number;
@@ -13,21 +14,21 @@ export default function ShopPanel() {
   const [category, setCategory] = useState<'gems' | 'characters' | 'items'>('gems');
 
   const gemPacks: ShopItem[] = [
-    { id: 1, name: "Small Gem Pack", description: "100 Gems", price: 0.99, currency: 'kino', image: "/images/gems-small.png" },
-    { id: 2, name: "Medium Gem Pack", description: "500 Gems", price: 4.99, currency: 'kino', image: "/images/gems-medium.png" },
-    { id: 3, name: "Large Gem Pack", description: "1200 Gems", price: 9.99, currency: 'kino', image: "/images/gems-large.png" },
+    { id: 1, name: "Small Gem Pack", description: "100 Gems", price: 0.99, currency: 'kino', image: "/images/gem.png" },
+    { id: 2, name: "Medium Gem Pack", description: "500 Gems", price: 4.99, currency: 'kino', image: "/images/gem.png" },
+    { id: 3, name: "Large Gem Pack", description: "1200 Gems", price: 9.99, currency: 'kino', image: "/images/gems.png" },
   ];
 
   const characters: ShopItem[] = [
-    { id: 4, name: "Shadow Warrior", description: "Melee Specialist", price: 300, currency: 'gems', image: "/images/char1.png" },
-    { id: 5, name: "Mystic Mage", description: "Magic Master", price: 500, currency: 'gems', image: "/images/char2.png" },
-    { id: 6, name: "Swift Archer", description: "Range Expert", price: 400, currency: 'gems', image: "/images/char3.png" },
+    { id: 4, name: "Shadow Warrior", description: "Melee Specialist", price: 300, currency: 'gems', image: "/images/char.png" },
+    { id: 5, name: "Mystic Mage", description: "Magic Master", price: 500, currency: 'gems', image: "/images/char.png" },
+    { id: 6, name: "Swift Archer", description: "Range Expert", price: 400, currency: 'gems', image: "/images/char.png" },
   ];
 
   const items: ShopItem[] = [
     { id: 7, name: "Health Potion", description: "Restore 50 HP", price: 100, currency: 'kino', image: "/images/potion1.png" },
-    { id: 8, name: "Power Crystal", description: "+10 Attack", price: 50, currency: 'gems', image: "/images/crystal1.png" },
-    { id: 9, name: "Speed Boots", description: "+15% Movement", price: 200, currency: 'kino', image: "/images/boots1.png" },
+    { id: 8, name: "Power Crystal", description: "+10 Attack", price: 50, currency: 'gems', image: "/images/item.png" },
+    { id: 9, name: "Speed Boots", description: "+15% Movement", price: 200, currency: 'kino', image: "/images/item.png" },
   ];
 
   const getCurrentItems = () => {
@@ -78,9 +79,11 @@ export default function ShopPanel() {
           <div key={item.id} className="bg-gradient-to-b from-black/40 to-black/20 backdrop-blur-sm rounded-xl p-4 hover:from-[#d3af37]/10 hover:to-black/30 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.2)]">
             <div className="aspect-square mb-4 relative overflow-hidden rounded-lg">
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-              <img
+              <Image
                 src={item.image}
                 alt={item.name}
+                width={64} // Set appropriate width
+                height={64} // Set appropriate height
                 className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
               />
             </div>
