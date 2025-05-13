@@ -3,22 +3,33 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import { MPL_TOKEN_METADATA_PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import * as anchor from "@coral-xyz/anchor";
-import { Keypair } from "@solana/web3.js";
 import type { NftMinter } from "../target/types/nft_minter";
+import {
+  Connection,
+  PublicKey,
+  Transaction,
+  SystemProgram,
+  TransactionInstruction,
+  Keypair,
+  SYSVAR_RENT_PUBKEY,
+} from "@solana/web3.js";
 
 describe("NFT Minter", () => {
-  const payer = pg.wallet;
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
+  const payer = provider.wallet as anchor.Wallet;
+  const program = anchor.workspace.NftMinter as anchor.Program<NftMinter>;
 
-  const metadata1 = {
+  const metadata = {
     name: "Homer NFT",
     symbol: "HOMR",
     uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json",
   };
 
   it("Create an NFT!", async () => {
-    const mintKeypair = new web3.Keypair();
+    const mintKeypair = new Keypair();
 
     const associatedTokenAccountAddress = getAssociatedTokenAddressSync(
       mintKeypair.publicKey,
@@ -26,7 +37,7 @@ describe("NFT Minter", () => {
     );
 
     // ✅ Derive metadata PDA
-    const [metadataAccount] = web3.PublicKey.findProgramAddressSync(
+    const [metadataAccount] = PublicKey.findProgramAddressSync(
       [
         Buffer.from("metadata"),
         TOKEN_METADATA_PROGRAM_ID.toBuffer(),
@@ -36,7 +47,7 @@ describe("NFT Minter", () => {
     );
 
     // ✅ Derive master edition PDA
-    const [editionAccount] = web3.PublicKey.findProgramAddressSync(
+    const [editionAccount] = PublicKey.findProgramAddressSync(
       [
         Buffer.from("metadata"),
         TOKEN_METADATA_PROGRAM_ID.toBuffer(),
@@ -46,17 +57,8 @@ describe("NFT Minter", () => {
       TOKEN_METADATA_PROGRAM_ID
     );
 
-    console.log("Accounts:");
-    console.log({
-      tokenProgram: TOKEN_PROGRAM_ID.toBase58(),
-      tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID.toBase58(),
-      associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID.toBase58(),
-      systemProgram: web3.SystemProgram.programId.toBase58(),
-      rent: web3.SYSVAR_RENT_PUBKEY.toBase58(),
-    });
-
-    const txSig = await pg.program.methods
-      .mintNft(metadata1.name, metadata1.symbol, metadata1.uri)
+    const txSig = await program.methods
+      .mintNft(metadata.name, metadata.symbol, metadata.uri)
       .accounts({
         payer: payer.publicKey,
         mintAccount: mintKeypair.publicKey,
@@ -66,8 +68,8 @@ describe("NFT Minter", () => {
         tokenProgram: TOKEN_PROGRAM_ID,
         tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-        systemProgram: web3.SystemProgram.programId,
-        rent: web3.SYSVAR_RENT_PUBKEY,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY,
       })
       .signers([mintKeypair])
       .rpc({ skipPreflight: true });
