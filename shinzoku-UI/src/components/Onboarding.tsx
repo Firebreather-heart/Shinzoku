@@ -47,12 +47,11 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white p-6 overflow-hidden">
-      <div className="w-full max-w-md text-center 
-                      bg-transparent lg:bg-[#121826] lg:shadow-2xl lg:rounded-2xl lg:p-8 lg:border lg:border-[#d3af37]">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center text-gold-500 p-4">
+      <div className="w-full max-w-[600px] bg-[#1a0e05] border border-[#d3af37] shadow-gold rounded-2xl p-6 md:p-8 text-center">
         {step === 0 && (
           <div>
-            <h2 className="text-2xl font-bold text-[#f5f5dc]">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#f5f5dc] mb-4">
               Enter Your Name
             </h2>
             <input
@@ -63,11 +62,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               onChange={(e) => setPlayerName(e.target.value)}
             />
             <button
-              className={`mt-6 px-6 py-2 text-lg rounded-lg ${
-                playerName.trim()
-                  ? "bg-[#b87333] hover:bg-[#cd7f32]"
-                  : "bg-[#b87333] cursor-not-allowed"
-              }`}
+              className={`mt-6 px-6 py-3 text-lg md:text-xl rounded-lg ${playerName.trim()
+                ? "bg-[#b87333] hover:bg-[#cd7f32]"
+                : "bg-[#b87333] cursor-not-allowed"
+                }`}
               onClick={() => playerName.trim() && setStep(1)}
               disabled={!playerName.trim()}
             >
@@ -92,19 +90,19 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 <Image
                   src={gameIntroSlides[step - 1].image}
                   alt={`Slide ${step}`}
-                  width={300}
-                  height={200}
+                  width={400}
+                  height={300}
                   className="rounded-md shadow-md w-full filter brightness-75 mx-auto"
                 />
               </div>
               {/* Text container below the image */}
               <div className="px-4 py-2">
-                <h2 className="text-xl font-semibold">
+                <h2 className="text-xl md:text-2xl font-semibold">
                   {gameIntroSlides[step - 1].text}
                 </h2>
               </div>
               <button
-                className="mt-6 inline-flex items-center gap-2 px-6 py-2 bg-[#b87333] hover:bg-[#cd7f32] text-white text-lg rounded-lg shadow-lg transition-all duration-300"
+                className="mt-6 inline-flex items-center gap-2 px-6 py-3 text-lg md:text-xl bg-[#b87333] hover:bg-[#cd7f32] text-white rounded-lg shadow-lg transition-all duration-300"
                 onClick={() => setStep(step + 1)}
               >
                 Next
@@ -129,15 +127,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               transition={{ duration: 0.5 }}
               className="animate-fade-in"
             >
-              <h2 className="text-3xl font-bold text-[#d3af37]">
+              <h2 className="text-3xl md:text-4xl font-bold text-[#d3af37]">
                 Welcome, {playerName}!
               </h2>
-              <p className="mt-4 text-lg text-gray-300">
-                Prepare yourself for an epic adventure in the realm of Shinzoku.
-              </p>
-              {/* Removed the start-game image */}
+              <p className="mt-4 text-lg md:text-xl text-gray-400">Your adventure starts now.</p>
               <button
-                className="mt-8 px-8 py-3 bg-gradient-to-r from-[#b87333] to-[#cd7f32] hover:from-[#cd7f32] hover:to-[#b87333] text-2xl font-bold rounded-full shadow-xl transition-all duration-300"
+                className="mt-8 px-8 py-4 text-2xl md:text-xl bg-gradient-to-r from-[#b87333] to-[#cd7f32] hover:from-[#cd7f32] hover:to-[#b87333] rounded-lg shadow-xl transition-all duration-300"
                 onClick={onComplete}
               >
                 Start Game
