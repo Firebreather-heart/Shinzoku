@@ -7,44 +7,63 @@
 
 
 :root {
-    --background: #ffffff;
-    --foreground: #171717;
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
 @theme inline {
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --font-sans: var(--font-geist-sans);
-    --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var (--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
-    :root {
-        --background: #0a0a0a;
-        --foreground: #ededed;
-    }
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
 }
 
 html,
 body {
-    height: 100%;
+  height: 100%;
+  /* Prevent text selection */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  /* Prevent pinch zooming on mobile */
+  touch-action: manipulation;
+
+  /* Prevent context menu */
+  -webkit-touch-callout: none;
 }
+
 body {
-    background: var(--background);
-    color: var(--foreground);
-    font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Optionally allow text selection inside specific elements like input fields */
+input,
+textarea {
+  user-select: auto;
+  -webkit-user-select: auto;
 }
 
 .wallet-adapter-button-trigger {
-    background: rgb(100, 26, 230) !important;
-    border-radius: 8px !important;
-    padding-left: 16px !important;
-    padding-right: 16px !important;
+  background: rgb(100, 26, 230) !important;
+  border-radius: 8px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
 }
 
 .wallet-adapter-dropdown-list,
 .wallet-adapter-button {
-    font-family: inherit !important;
+  font-family: inherit !important;
 }
 
 .wallet-adapter-button {
@@ -59,7 +78,7 @@ body {
 
 .text-shadow-game {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5),
-               0 0 10px rgba(211, 175, 55, 0.5);
+    0 0 10px rgba(211, 175, 55, 0.5);
 }
 
 .text-shadow-light {
@@ -71,6 +90,41 @@ body {
 }
 
 @keyframes glint {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Samsung S8+ and similar tall-screen device fixes */
+@media screen and (max-aspect-ratio: 18.5/9) {
+
+  html,
+  body {
+    /* Force proper sizing on ultra-tall screens */
+    width: 100%;
+    overflow-x: hidden;
+
+    /* Handle Samsung curved edge display */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Fix viewport issues on Samsung curved screens */
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Additional fix for Samsung edge displays */
+@supports(padding: max(0px)) {
+
+  /* Ensure content doesn't disappear into edge displays */
+  body {
+    padding-left: min(0.5rem, env(safe-area-inset-left));
+    padding-right: min(0.5rem, env(safe-area-inset-right));
+  }
 }
