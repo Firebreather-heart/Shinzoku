@@ -16,7 +16,7 @@ export default function ShopPanel() {
   const gemPacks: ShopItem[] = [
     { id: 1, name: "Small Gem Pack", description: "100 Gems", price: 0.99, currency: 'kino', image: "/images/gem.png" },
     { id: 2, name: "Medium Gem Pack", description: "500 Gems", price: 4.99, currency: 'kino', image: "/images/gem.png" },
-    { id: 3, name: "Large Gem Pack", description: "1200 Gems", price: 9.99, currency: 'kino', image: "/images/gems.png" },
+    { id: 3, name: "Large Gem Pack", description: "1200 Gems", price: 9.99, currency: 'kino', image: "/images/gem.png" },
   ];
 
   const characters: ShopItem[] = [
@@ -43,30 +43,46 @@ export default function ShopPanel() {
   return (
     <div className="flex flex-col h-full">
       {/* Category Tabs */}
-      <div className="flex gap-4 mb-6">
+      {/* Ensure this flex container itself doesn't get squeezed too much by its parent if it's also in a flex layout */}
+      <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-6"> {/* Adjusted gap and added justify-center for better appearance if space allows */}
         <button
           onClick={() => setCategory('gems')}
-          className={`px-6 py-3 rounded-lg transition-all duration-300 ${category === 'gems'
-            ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
-            : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
+          className={`
+            px-3 py-1.5 text-xs 
+            sm:px-4 sm:py-2 sm:text-sm 
+            md:px-6 md:py-3 md:text-base 
+            rounded-lg transition-all duration-300 
+            ${category === 'gems'
+              ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
+              : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
             }`}
         >
           Gem Packs
         </button>
         <button
           onClick={() => setCategory('characters')}
-          className={`px-6 py-3 rounded-lg transition-all duration-300 ${category === 'characters'
-            ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
-            : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
+          className={`
+            px-3 py-1.5 text-xs 
+            sm:px-4 sm:py-2 sm:text-sm 
+            md:px-6 md:py-3 md:text-base 
+            rounded-lg transition-all duration-300 
+            ${category === 'characters'
+              ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
+              : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
             }`}
         >
           Characters
         </button>
         <button
           onClick={() => setCategory('items')}
-          className={`px-6 py-3 rounded-lg transition-all duration-300 ${category === 'items'
-            ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
-            : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
+          className={`
+            px-3 py-1.5 text-xs 
+            sm:px-4 sm:py-2 sm:text-sm 
+            md:px-6 md:py-3 md:text-base 
+            rounded-lg transition-all duration-300 
+            ${category === 'items'
+              ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
+              : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
             }`}
         >
           Items
@@ -74,7 +90,7 @@ export default function ShopPanel() {
       </div>
 
       {/* Shop Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex-1 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-4 pr-1">
         {getCurrentItems().map((item) => (
           <div key={item.id} className="bg-gradient-to-b from-black/40 to-black/20 backdrop-blur-sm rounded-xl p-4 hover:from-[#d3af37]/10 hover:to-black/30 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.2)]">
             <div className="aspect-square mb-4 relative overflow-hidden rounded-lg">
