@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Image from 'next/image'
 
 interface Item {
   id: number;
@@ -78,9 +79,11 @@ export default function Shop({ setActiveTab }: ShopProps) {
               onClick={() => setSelectedItem(item)}
             >
               <div className="relative">
-                <img
+                <Image
                   src={item.imageUrl}
                   alt={item.name}
+                  width={64} // Set appropriate width
+                  height={64} // Set appropriate height
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
                 <div className="absolute top-2 right-2 bg-[#3b82f6] text-white text-xs font-bold rounded-lg px-2 py-1">
@@ -109,9 +112,11 @@ export default function Shop({ setActiveTab }: ShopProps) {
                 Item Details
               </h2>
               <div className="flex items-center gap-6 mb-4">
-                <img
+                <Image
                   src={selectedItem.imageUrl}
                   alt={selectedItem.name}
+                  width={64} // Set appropriate width
+                  height={64} // Set appropriate height
                   className="w-24 h-24 object-cover rounded-lg"
                 />
                 <div>

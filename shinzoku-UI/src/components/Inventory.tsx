@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Image from 'next/image';
 
 interface Item {
   id: number;
@@ -44,7 +45,7 @@ interface InventoryProps {
 }
 
 export default function Inventory({ setActiveTab }: InventoryProps) {
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);  
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const handleItemClick = (item: Item) => {
     setSelectedItem(item);
   };
@@ -68,9 +69,11 @@ export default function Inventory({ setActiveTab }: InventoryProps) {
               onClick={() => handleItemClick(item)}
             >
               <div className="relative">
-                <img
+                <Image
                   src={item.imageUrl}
                   alt={item.name}
+                  width={256} // Set appropriate width
+                  height={160} // Set appropriate height
                   className="w-full h-40 object-cover rounded-lg mb-4"
                 />
                 <div className="absolute top-2 right-2 bg-[#3b82f6] text-white text-xs font-bold rounded-lg px-2 py-1">
@@ -100,9 +103,11 @@ export default function Inventory({ setActiveTab }: InventoryProps) {
                 Item Details
               </h2>
               <div className="flex items-center gap-6 mb-4">
-                <img
+                <Image
                   src={selectedItem.imageUrl}
                   alt={selectedItem.name}
+                  width={96} // Set appropriate width
+                  height={96} // Set appropriate height
                   className="w-24 h-24 object-cover rounded-lg"
                 />
                 <div>
