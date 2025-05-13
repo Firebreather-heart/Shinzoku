@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { IconArrowLeft, IconCoin } from "@tabler/icons-react";
 import AnimatedHeartLogo from "./AnimatedLogo";
+import CampaignMode from "./campaign/CampaignMode";
 
 export default function GameInterface() {
   const [activeTab, setActiveTab] = useState<
@@ -74,16 +75,7 @@ export default function GameInterface() {
           )}
         </div>
 
-        {/* Center - Home button */}
-        {!isHomeScreen && (
-          <button
-            onClick={handleBack}
-            className="p-2 transition-all duration-300 transform hover:scale-110 relative group"
-          >
-            <div className="absolute inset-0 rounded-full bg-[#d3af37]/20 blur-md group-hover:blur-xl transition-all duration-300"></div>
-            <img src="/images/icon2.png" alt="Home" className="w-20 h-20 transform hover:rotate-3 transition-transform relative z-10 drop-shadow-[0_0_8px_rgba(211,175,55,0.6)] group-hover:drop-shadow-[0_0_15px_rgba(211,175,55,0.8)]" />
-          </button>
-        )}
+        <div className="w-24"></div>
 
         {/* Right side - Mailbox */}
         <div className={`${!isHomeScreen ? 'invisible' : ''} w-24`}>
@@ -148,81 +140,35 @@ export default function GameInterface() {
           )}
 
           {activeTab !== "home" && (
-            <div className="w-full max-w-[1200px] mx-auto bg-[#121826] rounded-xl border-2 border-[#d3af37] 
-              p-6 lg:p-12">
+            <div className="w-full max-w-[1200px] mx-auto bg-gradient-to-b from-[#1a0e05] to-[#121826] p-6 lg:p-12 rounded-xl shadow-[0_0_15px_rgba(211,175,55,0.1)]">
               {activeTab === "story" && (
-                <div>
-                  <h2 className="text-2xl font-bold text-[#3b82f6]">
-                    Story Mode
-                  </h2>
-                  <p className="mt-2 text-gray-400">
-                    Immerse yourself in a captivating narrative and unravel ancient mysteries.
-                  </p>
-                  <div className="mt-4 flex justify-center space-x-4">
-                    <button
-                      className="px-6 py-2 bg-red-500 hover:bg-red-600 text-lg rounded-lg shadow-lg"
-                      onClick={() => setActiveTab("battle")}
-                    >
-                      Enter Battle
-                    </button>
-                    <button
-                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-lg rounded-lg"
-                      onClick={handleBack}
-                    >
-                      Back
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === "campaign" && (
-                <div>
-                  <h2 className="text-2xl font-bold text-[#3b82f6]">
-                    Campaign Mode
-                  </h2>
-                  <p className="mt-2 text-gray-400">
-                    Engage in epic campaigns to conquer territories and unlock rewards.
-                  </p>
-                  <div className="mt-4 flex justify-center space-x-4">
-                    <button
-                      className="px-6 py-2 bg-red-500 hover:bg-red-600 text-lg rounded-lg shadow-lg"
-                      onClick={() => setActiveTab("battle")}
-                    >
-                      Enter Battle
-                    </button>
-                    <button
-                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-lg rounded-lg"
-                      onClick={handleBack}
-                    >
-                      Back
-                    </button>
-                  </div>
+                <div className="text-center">
+                  <h2 className="text-3xl font-bold text-[#d3af37] mb-4">Coming Soon!</h2>
+                  <p className="text-xl text-gray-400 mb-6">Story Mode is currently under development.</p>
+                  <button
+                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-lg rounded-lg"
+                    onClick={handleBack}
+                  >
+                    Back
+                  </button>
                 </div>
               )}
 
               {activeTab === "challenge" && (
-                <div>
-                  <h2 className="text-2xl font-bold text-[#3b82f6]">
-                    Challenge Mode
-                  </h2>
-                  <p className="mt-2 text-gray-400">
-                    Test your skills in timed challenges and unique puzzles.
-                  </p>
-                  <div className="mt-4 flex justify-center space-x-4">
-                    <button
-                      className="px-6 py-2 bg-red-500 hover:bg-red-600 text-lg rounded-lg shadow-lg"
-                      onClick={() => setActiveTab("battle")}
-                    >
-                      Enter Battle
-                    </button>
-                    <button
-                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-lg rounded-lg"
-                      onClick={handleBack}
-                    >
-                      Back
-                    </button>
-                  </div>
+                <div className="text-center">
+                  <h2 className="text-3xl font-bold text-[#d3af37] mb-4">Coming Soon!</h2>
+                  <p className="text-xl text-gray-400 mb-6">Challenge Mode is currently under development.</p>
+                  <button
+                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-lg rounded-lg"
+                    onClick={handleBack}
+                  >
+                    Back
+                  </button>
                 </div>
+              )}
+
+              {activeTab === "campaign" && (
+                <CampaignMode />
               )}
 
               {activeTab === "inventory" && (
