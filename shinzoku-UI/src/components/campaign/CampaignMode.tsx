@@ -7,8 +7,8 @@ export default function CampaignMode() {
     const [activePanel, setActivePanel] = useState<'world' | 'inventory' | 'shop'>('world')
 
     return (
-        <div className="flex flex-col h-full">
-            <div className="flex gap-4 mb-6">
+        <div className="flex flex-col h-full w-full">
+            <div className="flex gap-4 mb-6 sm:flex-row gap-4 w-full overflow-x-auto">
                 <button
                     onClick={() => setActivePanel('world')}
                     className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg transition-all duration-300 text-sm sm:text-base ${activePanel === 'world'
