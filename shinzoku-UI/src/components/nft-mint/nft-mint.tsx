@@ -147,8 +147,12 @@ const NftMint = () => {
         })
         .signers([mintKeypair])
         .rpc();
-
-      console.log("✅ NFT Minted: ", tx);
+      
+      console.log("✅ NFT Created!");
+      console.log(`   Mint Address: ${mintKeypair.publicKey}`);
+      console.log(
+        `   Tx Signature: ${tx}: https://solana.fm/tx/${tx}?cluster=devnet-solana`
+      );
     } catch (err) {
       console.error("❌ Error minting NFT", err);
     }
