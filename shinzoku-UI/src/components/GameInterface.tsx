@@ -75,9 +75,8 @@ export default function GameInterface() {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#0f172a] to-[#1e293b]">
       {/* Header */}
-      <div className="w-full h-24 md:h-28 lg:h-32 bg-[#1a0e05] relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#d3af37]/10 to-transparent"></div>
-        <div className="absolute inset-0 bg-[url('/images/header-pattern.png')] opacity-10"></div>
+      <div className="w-full h-12 md:h-14 lg:h-16 relative overflow-hidden">
+        <div className="absolute inset-0 "></div>
         <div className="h-full w-full max-w-[1200px] mx-auto px-6 flex justify-between items-center relative">
           {/* Left side - Player info */}
           <div className="flex items-center gap-3 sm:gap-4"> {/* Adjusted gap */}
@@ -133,8 +132,12 @@ export default function GameInterface() {
           style={{
             position: 'fixed',
             top: tooltip.elementRect.bottom + 8, // 8px below the element
-            left: tooltip.elementRect.left + (tooltip.elementRect.width / 2), // Centered horizontally relative to element
+            left: Math.min(
+              Math.max(tooltip.elementRect.left + (tooltip.elementRect.width / 2), 75),
+              window.innerWidth - 75
+            ),
             transform: 'translateX(-50%)', // Adjust for centering
+            maxWidth: '250px',
             minWidth: 'auto', // Let content define width
           }}
           className="bg-black/80 border border-[#d3af37]/50 text-white text-xs py-1 px-2.5 rounded-md shadow-lg z-[100] whitespace-nowrap"
@@ -145,9 +148,9 @@ export default function GameInterface() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto w-full">
-        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] w-full py-8 px-5 pb-32">
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] w-full py-8  pb-32">
           {activeTab === "home" && (
-            <div className="flex flex-col items-center w-full max-w-[1200px] mx-auto">
+            <div className="flex flex-col items-center w-full mx-auto">
               <div className="transform scale-90 sm:scale-100 lg:scale-110 mb-8">
                 <AnimatedHeartLogo />
               </div>
@@ -156,7 +159,7 @@ export default function GameInterface() {
                 Choose Your Path
               </h1>
 
-              <div className="grid gap-6 lg:gap-8 w-full sm:w-[80%] lg:w-[70%] xl:w-[60%] mx-auto">
+              <div className="grid gap-6 lg:gap-8 w-full lg:w-[70%] xl:w-[60%] mx-auto px-5">
                 <button
                   className="w-full p-6 bg-gradient-to-br from-[#d3af37] to-[#b87333] hover:from-[#e1c158] hover:to-[#cd7f32] 
                   rounded-xl shadow-lg transition-all hover:scale-[1.02] relative overflow-hidden group"
@@ -165,7 +168,6 @@ export default function GameInterface() {
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 
                   bg-gradient-to-r from-transparent via-white/20 to-transparent glint-animation"></div>
                   <h3 className="text-2xl lg:text-3xl font-bold text-black mb-2 text-shadow-light">Story Mode</h3>
-                  {/* <p className="text-[#121826] text-lg">Uncover the ancient mysteries of Shinzoku</p> */}
                 </button>
                 <button
                   className="w-full p-6 bg-gradient-to-br from-[#d3af37] to-[#b87333] hover:from-[#e1c158] hover:to-[#cd7f32] 
@@ -175,7 +177,6 @@ export default function GameInterface() {
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 
                   bg-gradient-to-r from-transparent via-white/20 to-transparent glint-animation"></div>
                   <h3 className="text-2xl lg:text-3xl font-bold text-black mb-2 text-shadow-light">Campaign</h3>
-                  {/* <p className="text-[#121826]">Conquer territories and build your empire</p> */}
                 </button>
                 <button
                   className="w-full p-6 bg-gradient-to-br from-[#d3af37] to-[#b87333] hover:from-[#e1c158] hover:to-[#cd7f32] 
@@ -185,7 +186,6 @@ export default function GameInterface() {
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 
                   bg-gradient-to-r from-transparent via-white/20 to-transparent glint-animation"></div>
                   <h3 className="text-2xl lg:text-3xl font-bold text-black mb-2 text-shadow-light">Challenge Mode</h3>
-                  {/* <p className="text-[#121826]">Test your skills in epic battles</p> */}
                 </button>
               </div>
             </div>
@@ -220,7 +220,9 @@ export default function GameInterface() {
               )}
 
               {activeTab === "campaign" && (
-                <CampaignMode />
+                <div className="w-full max-w-[1200px] mx-auto bg-gradient-to-b from-[#1a0e05] to-[#121826] rounded-xl shadow-[0_0_15px_rgba(211,175,55,0.1)] overflow-hidden">
+                  <CampaignMode />
+                </div>
               )}
 
               {activeTab === "inventory" && (
