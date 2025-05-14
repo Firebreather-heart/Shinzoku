@@ -1,64 +1,69 @@
-import { useState } from 'react';
-import Image from 'next/image';
-
-interface ShopItem {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  currency: 'gems' | 'kino';
-  image: string;
-}
+import { useState, useEffect } from 'react';
+import { CharacterModel } from '@/types/CharacterModel';
+import { ItemModel } from '@/types/ItemModel';
+import { DemonModel } from '@/types/DemonModel';
+import { DungeonModel } from '@/types/DungeonModel';
+import { ShinzokuAPI } from '@/services/ShinzokuAPI';
+import CharacterList from '../characters/CharacterList';
+import ItemList from '../items/ItemList';
+import DungeonList from '../dungeons/DungeonList';
 
 export default function ShopPanel() {
-  const [category, setCategory] = useState<'gems' | 'characters' | 'items'>('gems');
+  const [category, setCategory] = useState<'characters' | 'items' | 'dungeons'>('characters');
+  const [characters, setCharacters] = useState<CharacterModel[]>([]);
+  const [items, setItems] = useState<ItemModel[]>([]);
+  const [demons, setDemons] = useState<DemonModel[]>([]);
+  const [dungeons, setDungeons] = useState<DungeonModel[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const gemPacks: ShopItem[] = [
-    { id: 1, name: "Small Gem Pack", description: "100 Gems", price: 0.99, currency: 'kino', image: "/images/gem.png" },
-    { id: 2, name: "Medium Gem Pack", description: "500 Gems", price: 4.99, currency: 'kino', image: "/images/gem.png" },
-    { id: 3, name: "Large Gem Pack", description: "1200 Gems", price: 9.99, currency: 'kino', image: "/images/gem.png" },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const characters: ShopItem[] = [
-    { id: 4, name: "Shadow Warrior", description: "Melee Specialist", price: 300, currency: 'gems', image: "/images/char.png" },
-    { id: 5, name: "Mystic Mage", description: "Magic Master", price: 500, currency: 'gems', image: "/images/char.png" },
-    { id: 6, name: "Swift Archer", description: "Range Expert", price: 400, currency: 'gems', image: "/images/char.png" },
-  ];
+        // Use the API service to fetch data using the correct API key
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SHINZOKU_API_KEY || 'shinzoku-katen-kyotsu-tensa-zangetsu'}`
+        };
 
-  const items: ShopItem[] = [
-    { id: 7, name: "Health Potion", description: "Restore 50 HP", price: 100, currency: 'kino', image: "/images/potion1.png" },
-    { id: 8, name: "Power Crystal", description: "+10 Attack", price: 50, currency: 'gems', image: "/images/item.png" },
-    { id: 9, name: "Speed Boots", description: "+15% Movement", price: 200, currency: 'kino', image: "/images/item.png" },
-  ];
+        // Replace with actual API endpoints once they're ready
+        const [charactersData, itemsData, demonsData, dungeonsData] = await Promise.all([
+          ShinzokuAPI.getCharacters(),
+          ShinzokuAPI.getItems(),
+          ShinzokuAPI.getDemons(),
+          ShinzokuAPI.getDungeons()
+        ]);
 
-  const getCurrentItems = () => {
-    switch (category) {
-      case 'gems': return gemPacks;
-      case 'characters': return characters;
-      case 'items': return items;
-      default: return gemPacks;
-    }
-  };
+        // Update state with fetched data
+        setCharacters(charactersData);
+        setItems(itemsData);
+        setDemons(demonsData);
+        setDungeons(dungeonsData);
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Failed to load data. Please try again later.');
+        setLoading(false);
+
+        // Fallback to sample data in case of error
+        setCharacters(sampleCharacters);
+        setItems(sampleItems);
+        setDemons(sampleDemons);
+        setDungeons(sampleDungeons);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col h-full">
       {/* Category Tabs */}
-      {/* Ensure this flex container itself doesn't get squeezed too much by its parent if it's also in a flex layout */}
-      <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-6"> {/* Adjusted gap and added justify-center for better appearance if space allows */}
-        <button
-          onClick={() => setCategory('gems')}
-          className={`
-            px-3 py-1.5 text-xs 
-            sm:px-4 sm:py-2 sm:text-sm 
-            md:px-6 md:py-3 md:text-base 
-            rounded-lg transition-all duration-300 
-            ${category === 'gems'
-              ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
-              : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
-            }`}
-        >
-          Gem Packs
-        </button>
+      <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-6">
         <button
           onClick={() => setCategory('characters')}
           className={`
@@ -87,35 +92,243 @@ export default function ShopPanel() {
         >
           Items
         </button>
+        <button
+          onClick={() => setCategory('dungeons')}
+          className={`
+            px-3 py-1.5 text-xs 
+            sm:px-4 sm:py-2 sm:text-sm 
+            md:px-6 md:py-3 md:text-base 
+            rounded-lg transition-all duration-300 
+            ${category === 'dungeons'
+              ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
+              : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
+            }`}
+        >
+          Dungeons
+        </button>
       </div>
 
-      {/* Shop Grid */}
-      <div className="flex-1 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-4 pr-1">
-        {getCurrentItems().map((item) => (
-          <div key={item.id} className="bg-gradient-to-b from-black/40 to-black/20 backdrop-blur-sm rounded-xl p-4 hover:from-[#d3af37]/10 hover:to-black/30 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.2)]">
-            <div className="aspect-square mb-4 relative overflow-hidden rounded-lg">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-              <Image
-                src={item.image}
-                alt={item.name}
-                width={64} // Set appropriate width
-                height={64} // Set appropriate height
-                className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
-              />
-            </div>
-            <h3 className="text-xl font-bold text-[#d3af37] mb-2">{item.name}</h3>
-            <p className="text-gray-400 mb-4">{item.description}</p>
-            <div className="flex justify-between items-center">
-              <span className="text-[#d3af37] font-bold">
-                {item.price} {item.currency === 'gems' ? '💎' : 'kino'}
-              </span>
-              <button className="px-4 py-2 bg-gradient-to-r from-[#d3af37] to-[#b87333] hover:from-[#e1c158] hover:to-[#cd7f32] rounded-lg text-black font-semibold transition-all duration-300 hover:shadow-[0_0_10px_rgba(211,175,55,0.3)]">
-                Buy
-              </button>
+      {/* Content Area */}
+      <div className="flex-1 overflow-y-auto">
+        {loading ? (
+          <div className="flex justify-center items-center min-h-[300px]">
+            <div className="spinner w-12 h-12 border-4 border-[#d3af37] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : error ? (
+          <div className="flex justify-center items-center min-h-[300px] flex-col">
+            <div className="bg-red-900/30 border border-red-500/30 rounded-lg p-4 max-w-md text-center">
+              <p className="text-red-400 font-semibold mb-2">⚠️ {error}</p>
+              <p className="text-gray-400 text-sm">Using sample data instead.</p>
             </div>
           </div>
-        ))}
+        ) : (
+          <>
+            {category === 'characters' && <CharacterList characters={characters} />}
+            {category === 'items' && <ItemList items={items} />}
+            {category === 'dungeons' && <DungeonList dungeons={dungeons} demons={demons} items={items} />}
+          </>
+        )}
       </div>
     </div>
   );
 }
+
+// Sample data as fallback in case the API is not available
+const sampleCharacters: CharacterModel[] = [
+  {
+    shinzoku_id: "shinzok_abcdef1234567890",
+    name: "Naruto Uzumaki",
+    stats: {
+      hp: 100,
+      armor: 10,
+      dmg: 50,
+      range: 3,
+      speed: 30,
+      kp: 150
+    },
+    image_url: "/images/char.png",
+    special_abilities: [
+      {
+        name: "Rasengan",
+        value: 100,
+        mp_cost: 25,
+        jutsu_name: "Spirited Burst",
+        rank: 1500
+      },
+      {
+        name: "Shadow Clone",
+        value: 75,
+        mp_cost: 15,
+        jutsu_name: "Multiple Bodies",
+        rank: 1200
+      }
+    ],
+    price: 0,
+    rarity: "Rare",
+    rank: 8500,
+    rank_name: "C"
+  },
+  {
+    shinzoku_id: "shinzok_bcdefg1234567890",
+    name: "Sasuke Uchiha",
+    stats: {
+      hp: 90,
+      armor: 8,
+      dmg: 60,
+      range: 2,
+      speed: 35,
+      kp: 140
+    },
+    image_url: "/images/char.png",
+    special_abilities: [
+      {
+        name: "Chidori",
+        value: 110,
+        mp_cost: 30,
+        jutsu_name: "Lightning Blade",
+        rank: 1600
+      }
+    ],
+    price: 5000,
+    rarity: "Epic",
+    rank: 9000,
+    rank_name: "B"
+  }
+];
+
+const sampleItems: ItemModel[] = [
+  {
+    shinzoku_id: "item_abcdef1234567890",
+    name: "Shadow Blade",
+    stats: {
+      hp: 0,
+      armor: 5,
+      dmg: 30,
+      range: 1,
+      speed: 10,
+      kp: 0
+    },
+    special_abilities: [
+      {
+        name: "Shadow Strike",
+        value: 50,
+        mp_cost: 15,
+        jutsu_name: "Darkness Slash",
+        rank: 800
+      }
+    ],
+    image_url: "/images/item.png",
+    price: 2500,
+    rarity: "Epic",
+    rank: 5800,
+    rank_name: "D"
+  },
+  {
+    shinzoku_id: "item_bcdefg1234567890",
+    name: "Healing Crystal",
+    stats: {
+      hp: 50,
+      armor: 0,
+      dmg: 0,
+      range: 0,
+      speed: 5,
+      kp: 20
+    },
+    special_abilities: [
+      {
+        name: "Rejuvenation",
+        value: 40,
+        mp_cost: 10,
+        jutsu_name: "Life Force",
+        rank: 700
+      }
+    ],
+    image_url: "/images/item.png",
+    price: 1800,
+    rarity: "Rare",
+    rank: 4200,
+    rank_name: "E"
+  }
+];
+
+const sampleDemons: DemonModel[] = [
+  {
+    shinzoku_id: "demon_abcdef1234567890",
+    name: "Shadow Fiend",
+    stats: {
+      hp: 200,
+      armor: 20,
+      dmg: 75,
+      range: 2,
+      speed: 25,
+      kp: 180
+    },
+    image_url: "/images/char.png",
+    special_abilities: [
+      {
+        name: "Dark Nova",
+        value: 120,
+        mp_cost: 40,
+        jutsu_name: "Void Explosion",
+        rank: 2000
+      }
+    ],
+    type: "Elite",
+    rank: 9500,
+    rank_name: "B"
+  },
+  {
+    shinzoku_id: "demon_bcdefg1234567890",
+    name: "Flame Wraith",
+    stats: {
+      hp: 150,
+      armor: 15,
+      dmg: 80,
+      range: 3,
+      speed: 30,
+      kp: 160
+    },
+    image_url: "/images/char.png",
+    special_abilities: [
+      {
+        name: "Inferno",
+        value: 100,
+        mp_cost: 35,
+        jutsu_name: "Soul Burn",
+        rank: 1800
+      }
+    ],
+    type: "Normal",
+    rank: 7000,
+    rank_name: "C"
+  }
+];
+
+const sampleDungeons: DungeonModel[] = [
+  {
+    dungeon_id: "dungeon_abcdef1234567890",
+    name: "Dark Forest Cavern",
+    description: "A dangerous cavern in the heart of the dark forest, home to powerful shadow beasts",
+    image_url: "/images/dungeon.jpg",
+    boss: "demon_abcdef1234567890",
+    members: [
+      "demon_bcdefg1234567890"
+    ],
+    rank: 12000,
+    rank_name: "A",
+    rewards: {
+      exp: 500,
+      gold: 300,
+      items: [
+        {
+          item: "item_abcdef1234567890",
+          dropRate: 15
+        },
+        {
+          item: "item_bcdefg1234567890",
+          dropRate: 5
+        }
+      ]
+    }
+  }
+];
