@@ -9,7 +9,7 @@ export default function WalletConnect() {
           <AnimatedHeartLogo />
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold text-[#d3af37] drop-shadow-lg">
-          Connect Your Wallet
+          Connect Your Solana Wallet
         </h1>
         <p className="text-[#f5deb3] mt-4 text-lg">
           Shinzoku warriors await your command.

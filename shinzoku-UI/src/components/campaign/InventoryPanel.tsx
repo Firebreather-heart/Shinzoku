@@ -12,6 +12,7 @@ interface InventoryItem {
   stats?: {
     [key: string]: number;
   };
+  jutsu_name?: string;
 }
 
 export default function InventoryPanel() {
@@ -30,7 +31,8 @@ export default function InventoryPanel() {
         attack: 75,
         defense: 60,
         speed: 45
-      }
+      },
+      jutsu_name: "Shadow Strike"
     },
     {
       id: 2,
@@ -44,7 +46,8 @@ export default function InventoryPanel() {
         attack: 65,
         defense: 40,
         speed: 80
-      }
+      },
+      jutsu_name: "Rapid Fire"
     }
   ];
 
@@ -112,9 +115,9 @@ export default function InventoryPanel() {
               <Image
                 src={item.image}
                 alt={item.name}
-                width={64} // Set appropriate width
-                height={64} // Set appropriate height
-                className="w-full h-full object-cover"
+                width={128}
+                height={128}
+                className="w-full h-full object-top object-contain"
               />
               {item.level && (
                 <div className="absolute top-2 right-2 w-8 h-8 rounded-full bg-gradient-to-br from-[#d3af37] to-[#b87333] flex items-center justify-center text-black font-bold shadow-lg">
@@ -125,6 +128,13 @@ export default function InventoryPanel() {
             <h3 className="text-xl font-bold text-[#d3af37] mb-1">{item.name}</h3>
             <p className={`text-sm ${getRarityColor(item.rarity)} mb-2`}>{item.rarity.charAt(0).toUpperCase() + item.rarity.slice(1)} {item.type}</p>
             <p className="text-gray-400 text-sm mb-4">{item.description}</p>
+
+            {/* Prominent jutsu name for special abilities */}
+            {item.jutsu_name && (
+              <div className="mb-2">
+                <span className="text-lg font-bold text-[#d3af37]">{item.jutsu_name}</span>
+              </div>
+            )}
 
             {item.stats && (
               <div className="space-y-2">
