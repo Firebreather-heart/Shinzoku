@@ -28,8 +28,11 @@ const TOKEN_METADATA_PROGRAM_ID = new PublicKey(
   "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
 );
 
-// Base URI for character metadata
-const METADATA_BASE_URI = "https://shinzoku.com/metadata/";
+// Base URIs for metadata
+const METADATA_BASE_URLS = {
+  characters: "https://shinzoku-admin.vercel.app/api/characters/",
+  items: "https://shinzoku-admin.vercel.app/api/items/"
+};
 
 // Calculate the discriminator for mint_nft (first 8 bytes of sha256 hash)
 // This is the Anchor standard way to calculate discriminators
@@ -43,13 +46,22 @@ function calculateDiscriminator(namespace: string, name: string): Buffer {
 const MINT_NFT_DISCRIMINATOR = calculateDiscriminator("global", "mint_nft");
 
 /**
- * Mints an NFT for a character using the NFT Minter program
+ * NFT Type enum
  */
-export async function mintCharacterNFT(
+export enum NftType {
+  CHARACTER = 'characters',
+  ITEM = 'items'
+}
+
+/**
+ * Mints an NFT using the NFT Minter program
+ */
+export async function mintNFT(
   connection: Connection,
   wallet: WalletContextState,
-  characterId: string,
-  characterName: string
+  id: string,
+  name: string,
+  type: NftType = NftType.CHARACTER
 ) {
   try {
     // Check if wallet is connected
@@ -57,7 +69,7 @@ export async function mintCharacterNFT(
       throw new Error("Wallet not connected");
     }
 
-    console.log(`Starting NFT minting for character: ${characterName} (ID: ${characterId})`);
+    console.log(`Starting NFT minting for ${type} ${name} (ID: ${id})`);
 
     // Generate a new keypair for the mint
     const mintKeypair = Keypair.generate();
@@ -100,19 +112,13 @@ export async function mintCharacterNFT(
     // Create a new transaction
     const transaction = new Transaction();
 
-    // Create mint account - we don't need this since the Anchor program will do it
-    // The Rust code shows that the mint_account is marked as `init`
-    // so the program will create it for us
-
     // Set up NFT metadata
-    const nftName = `Shinzoku: ${characterName}`;
+    const nftName = `Shinzoku: ${name}`;
     const nftSymbol = "SHINZ";
-    const nftUri = `${METADATA_BASE_URI}${characterId}.json`;
 
-    // Prepare instruction data
-    // From your Rust code:
-    // pub fn mint_nft(ctx: Context<CreateToken>, nft_name: String, nft_symbol: String, nft_uri: String)
-    console.log("Calculating discriminator for mint_nft:", Buffer.from(MINT_NFT_DISCRIMINATOR).toString('hex'));
+    // Build the correct metadata URL based on the NFT type
+    const nftUri = `${METADATA_BASE_URLS[type]}${id}/metadata/`;
+    console.log(`Metadata URI: ${nftUri}`);
 
     // Convert strings to byte arrays
     const nameBytes = Buffer.from(nftName);
@@ -141,7 +147,6 @@ export async function mintCharacterNFT(
     ]);
 
     // Add the mint NFT instruction with accounts in the EXACT order from the Rust program
-    // The order must match CreateToken struct in your Rust program
     const mintNftInstruction = new TransactionInstruction({
       keys: [
         { pubkey: wallet.publicKey, isSigner: true, isWritable: true },         // payer (Signer)
@@ -227,4 +232,29 @@ export async function mintCharacterNFT(
       errorMessage: error.message || "Unknown error occurred",
     };
   }
+}
+
+/**
+ * Mints an NFT for a character using the NFT Minter program
+ * @deprecated Use mintNFT with NftType.CHARACTER instead
+ */
+export async function mintCharacterNFT(
+  connection: Connection,
+  wallet: WalletContextState,
+  characterId: string,
+  characterName: string
+) {
+  return mintNFT(connection, wallet, characterId, characterName, NftType.CHARACTER);
+}
+
+/**
+ * Mints an NFT for an item using the NFT Minter program
+ */
+export async function mintItemNFT(
+  connection: Connection,
+  wallet: WalletContextState,
+  itemId: string,
+  itemName: string
+) {
+  return mintNFT(connection, wallet, itemId, itemName, NftType.ITEM);
 }
