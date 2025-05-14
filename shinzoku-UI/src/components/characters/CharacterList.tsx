@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { CharacterModel } from '@/types/CharacterModel';
+import NftMintingModal from '../nft/NftMintingModal';
 
 interface CharacterListProps {
     characters: CharacterModel[];
@@ -8,6 +9,7 @@ interface CharacterListProps {
 
 export default function CharacterList({ characters }: CharacterListProps) {
     const [selectedCharacter, setSelectedCharacter] = useState<CharacterModel | null>(null);
+    const [showMintModal, setShowMintModal] = useState<boolean>(false);
 
     const getRarityColor = (rarity: string) => {
         switch (rarity.toLowerCase()) {
@@ -26,6 +28,14 @@ export default function CharacterList({ characters }: CharacterListProps) {
 
     const handleCloseDetails = () => {
         setSelectedCharacter(null);
+    };
+
+    const handleOpenMintModal = () => {
+        setShowMintModal(true);
+    };
+
+    const handleCloseMintModal = () => {
+        setShowMintModal(false);
     };
 
     return (
@@ -157,21 +167,38 @@ export default function CharacterList({ characters }: CharacterListProps) {
                                     ))}
                                 </div>
 
-                                <div className="mt-6">
+                                <div className="mt-6 flex gap-3">
                                     {selectedCharacter.price > 0 ? (
-                                        <button className="w-full py-3 bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold rounded-lg hover:from-[#e1c158] hover:to-[#cd7f32] transition-all">
+                                        <button className="flex-1 py-3 bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold rounded-lg hover:from-[#e1c158] hover:to-[#cd7f32] transition-all">
                                             Purchase for {selectedCharacter.price.toLocaleString()} Sol
                                         </button>
                                     ) : (
-                                        <button className="w-full py-3 bg-gradient-to-br from-green-600 to-green-800 text-white font-bold rounded-lg hover:from-green-500 hover:to-green-700 transition-all">
+                                        <button className="flex-1 py-3 bg-gradient-to-br from-green-600 to-green-800 text-white font-bold rounded-lg hover:from-green-500 hover:to-green-700 transition-all">
                                             Claim for Free
                                         </button>
                                     )}
+
+                                    {/* NFT Mint Button */}
+                                    <button
+                                        onClick={handleOpenMintModal}
+                                        className="py-3 px-4 bg-gradient-to-br from-purple-600 to-blue-700 text-white font-bold rounded-lg hover:from-purple-500 hover:to-blue-600 transition-all"
+                                    >
+                                        Mint NFT
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* NFT Minting Modal */}
+            {selectedCharacter && showMintModal && (
+                <NftMintingModal
+                    character={selectedCharacter}
+                    isOpen={showMintModal}
+                    onClose={handleCloseMintModal}
+                />
             )}
         </>
     );

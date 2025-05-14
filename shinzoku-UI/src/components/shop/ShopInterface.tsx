@@ -113,15 +113,6 @@ export default function ShopInterface() {
                     >
                         Items
                     </button>
-                    <button
-                        className={`px-6 py-3 rounded-lg transition-all duration-300 text-lg ${activeTab === 'dungeons'
-                            ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
-                            : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
-                            }`}
-                        onClick={() => setActiveTab('dungeons')}
-                    >
-                        Dungeons
-                    </button>
                 </div>
 
                 {/* Content Area */}
