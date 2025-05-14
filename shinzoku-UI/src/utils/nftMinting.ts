@@ -209,7 +209,7 @@ export async function mintNFT(
         console.error("Transaction logs:", logs.join('\n'));
 
         // Special handling for the fallback error
-        if (logs.some(log => log.includes("InstructionFallbackNotFound"))) {
+        if (logs.some((log: string) => log.includes("InstructionFallbackNotFound"))) {
           console.error("This is a discriminator issue. The program cannot recognize the instruction.");
 
           return {

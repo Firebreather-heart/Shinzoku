@@ -1,4 +1,3 @@
-Shinzoku / shinzoku - UI / src / components / items / ItemDetail.tsx
 import { useState } from 'react';
 import Image from 'next/image';
 import { ItemModel } from '@/types/ItemModel';
@@ -11,6 +10,7 @@ interface ItemDetailProps {
 
 export default function ItemDetail({ item, onClose }: ItemDetailProps) {
     const [showMintModal, setShowMintModal] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     const handleOpenMintModal = () => {
         setShowMintModal(true);
@@ -47,19 +47,19 @@ export default function ItemDetail({ item, onClose }: ItemDetailProps) {
 
                     <div className="flex flex-col sm:flex-row gap-6">
                         <div className="w-full sm:w-1/3">
-                            <div className="aspect-square relative rounded-lg overflow-hidden mb-4">
-                                <Image
-                                    src={item.image_url}
-                                    alt={item.name}
-                                    width={300}
-                                    height={300}
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.onerror = null;
-                                        target.src = '/images/default_item.png';
-                                    }}
-                                />
+                            <div className="aspect-square relative rounded-lg overflow-hidden mb-4 bg-gray-800">
+                                {imageError ? (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <span className="text-gray-500">{item.name}</span>
+                                    </div>
+                                ) : (
+                                    <img
+                                        src={item.image_url}
+                                        alt={item.name}
+                                        className="w-full h-full object-cover"
+                                        onError={() => setImageError(true)}
+                                    />
+                                )}
                             </div>
 
                             <div className="flex flex-wrap gap-2 mb-4">

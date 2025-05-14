@@ -9,6 +9,7 @@ interface ItemListProps {
 
 export default function ItemList({ items }: ItemListProps) {
     const [selectedItem, setSelectedItem] = useState<ItemModel | null>(null);
+    const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
     // Helper function to get primary stat
     const getPrimaryStat = (item: ItemModel) => {
@@ -47,6 +48,14 @@ export default function ItemList({ items }: ItemListProps) {
         setSelectedItem(null);
     };
 
+    // Handle image error
+    const handleImageError = (itemId: string) => {
+        setImageErrors(prev => ({
+            ...prev,
+            [itemId]: true
+        }));
+    };
+
     return (
         <div className="p-4">
             <h2 className="text-2xl font-bold text-[#d3af37] mb-6">Items</h2>
@@ -54,27 +63,28 @@ export default function ItemList({ items }: ItemListProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {items.map((item) => {
                     const primaryStat = getPrimaryStat(item);
+                    const hasImageError = imageErrors[item.shinzoku_id];
 
                     return (
                         <div
                             key={item.shinzoku_id}
                             className={`border ${getRarityClass(item.rarity)} rounded-xl overflow-hidden cursor-pointer 
-                        transition-all duration-300 transform hover:scale-[1.03] hover:shadow-lg`}
-                            onClick={() => setSelectedItem(item)}
+                            transition-all duration-300 transform hover:scale-[1.03] hover:shadow-lg`}
+                            onClick={() => handleItemClick(item)}
                         >
-                            <div className="relative h-40">
-                                <Image
-                                    src={item.image_url}
-                                    alt={item.name}
-                                    width={300}
-                                    height={200}
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.onerror = null;
-                                        target.src = '/images/default_item.png';
-                                    }}
-                                />
+                            <div className="relative h-40 bg-gray-800">
+                                {hasImageError ? (
+                                    <div className="w-full h-full flex items-center justify-center bg-gray-800">
+                                        <span className="text-gray-500">{item.name}</span>
+                                    </div>
+                                ) : (
+                                    <img
+                                        src={item.image_url}
+                                        alt={item.name}
+                                        className="w-full h-full object-cover"
+                                        onError={() => handleImageError(item.shinzoku_id)}
+                                    />
+                                )}
                                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2">
                                     <div className="flex justify-between items-center">
                                         <span className="text-sm font-medium text-white">{item.rarity}</span>

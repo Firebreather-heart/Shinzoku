@@ -57,7 +57,7 @@ export default function NftMintingModal({ character, item, isOpen, onClose }: Nf
         assetType
       );
 
-      // Make sure we convert any object error to a string
+      // Updated error handling to match what mintNFT returns
       setResult({
         success: mintResult.success,
         mintAddress: mintResult.mintAddress,
@@ -66,11 +66,7 @@ export default function NftMintingModal({ character, item, isOpen, onClose }: Nf
           ? mintResult.errorMessage
           : mintResult.errorMessage
             ? JSON.stringify(mintResult.errorMessage)
-            : mintResult.error
-              ? typeof mintResult.error === 'string'
-                ? mintResult.error
-                : 'An error occurred during minting'
-              : undefined
+            : undefined
       });
     } catch (err: any) {
       console.error('Error in mint flow:', err);
