@@ -83,8 +83,8 @@ export default function CharacterList({ characters }: CharacterListProps) {
                         <div className="mt-3 flex justify-between items-center">
                             {character.price > 0 ? (
                                 <div className="flex items-center">
-                                    <IconCoin />
-                                    <span className="ml-1 text-white font-bold">{character.price.toLocaleString()}</span>
+                                    🌕
+                                    <span className="ml-1 text-white font-bold">{character.price.toLocaleString()} sol</span>
                                 </div>
                             ) : (
                                 <span className="text-green-500 font-semibold">Free</span>
@@ -168,7 +168,7 @@ export default function CharacterList({ characters }: CharacterListProps) {
                                 </div>
 
                                 <div className="mt-6 flex gap-3">
-                                    {selectedCharacter.price > 0 ? (
+                                    {/* {selectedCharacter.price > 0 ? (
                                         <button className="flex-1 py-3 bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold rounded-lg hover:from-[#e1c158] hover:to-[#cd7f32] transition-all">
                                             Purchase for {selectedCharacter.price.toLocaleString()} Sol
                                         </button>
@@ -176,7 +176,7 @@ export default function CharacterList({ characters }: CharacterListProps) {
                                         <button className="flex-1 py-3 bg-gradient-to-br from-green-600 to-green-800 text-white font-bold rounded-lg hover:from-green-500 hover:to-green-700 transition-all">
                                             Claim for Free
                                         </button>
-                                    )}
+                                    )} */}
 
                                     {/* NFT Mint Button */}
                                     <button

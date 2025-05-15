@@ -98,7 +98,7 @@ export default function NftMintingModal({ character, item, isOpen, onClose }: Nf
             You are about to mint <span className="text-[#d3af37] font-semibold">{assetName}</span> as an NFT.
           </p>
           <p className="text-gray-400 text-sm">
-            This will create a permanent token on the Solana blockchain representing your {assetTypeText.toLowerCase()}.
+            This will create a NFT on the Solana blockchain representing your {assetTypeText.toLowerCase()}.
           </p>
         </div>
 
@@ -107,10 +107,10 @@ export default function NftMintingModal({ character, item, isOpen, onClose }: Nf
             {result.success ? (
               <>
                 <p className="font-bold mb-1">Success!</p>
-                <p className="text-sm mb-1">
+                <p className="text-sm mb-1 break-all">
                   NFT Mint Address: <span className="font-mono">{result.mintAddress}</span>
                 </p>
-                <p className="text-sm">
+                <p className="text-sm ">
                   <a
                     href={`https://explorer.solana.com/address/${result.mintAddress}?cluster=devnet`}
                     target="_blank"
@@ -124,38 +124,50 @@ export default function NftMintingModal({ character, item, isOpen, onClose }: Nf
             ) : (
               <>
                 <p className="font-bold mb-1">Error</p>
-                <p className="text-sm">{result.error}</p>
+                <p className="text-sm break-words">{result.error}</p>
               </>
             )}
           </div>
         )}
 
         <div className="mt-6 flex space-x-4">
-          <button
-            onClick={onClose}
-            className="flex-1 py-3 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
-            disabled={isMinting}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleMintNFT}
-            className={`flex-1 py-3 px-4 bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold rounded-lg 
-            hover:from-[#e1c158] hover:to-[#cd7f32] transition-all ${isMinting ? 'opacity-50 cursor-not-allowed' : ''}`}
-            disabled={isMinting}
-          >
-            {isMinting ? (
-              <div className="flex justify-center items-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Minting...
-              </div>
-            ) : (
-              'Mint NFT'
-            )}
-          </button>
+          {result?.success ? (
+            <button
+              onClick={onClose}
+              className="w-full py-3 px-4 bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold rounded-lg 
+              hover:from-[#e1c158] hover:to-[#cd7f32] transition-all"
+            >
+              Close
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={onClose}
+                className="flex-1 py-3 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                disabled={isMinting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleMintNFT}
+                className={`flex-1 py-3 px-4 bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold rounded-lg 
+                hover:from-[#e1c158] hover:to-[#cd7f32] transition-all ${isMinting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={isMinting}
+              >
+                {isMinting ? (
+                  <div className="flex justify-center items-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Minting...
+                  </div>
+                ) : (
+                  'Mint NFT'
+                )}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

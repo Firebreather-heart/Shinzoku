@@ -2,7 +2,7 @@ import { useState } from "react";
 import ShopInterface from "./shop/ShopInterface";
 
 interface ShopProps {
-  setActiveTab: (tab: "shop" | "home" | "inventory" | "battle") => void; // Prop for changing the active tab
+  setActiveTab: (tab: "shop" | "home" | "inventory" | "battle") => void;
 }
 
 export default function Shop({ setActiveTab }: ShopProps) {
@@ -18,7 +18,6 @@ export default function Shop({ setActiveTab }: ShopProps) {
           </button>
         </div>
 
-        {/* Integrate our new ShopInterface component */}
         <ShopInterface />
       </div>
     </div>
