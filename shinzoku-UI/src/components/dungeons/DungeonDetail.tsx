@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
-import { DungeonModel } from '@/types/DungeonModel';
-import { DemonModel } from '@/types/DemonModel';
+import { DungeonModel, DemonModel } from '@/types/DungeonModel';
+// import { DemonModel } from '@/types/DemonModel';
 import { ItemModel } from '@/types/ItemModel';
 import DemonCard from '../cards/DemonCard';
 import ItemCard from '../cards/ItemCard';
@@ -19,10 +19,10 @@ export default function DungeonDetail({ dungeon, demons, rewardItems, onClose }:
     const [isBoss, setIsBoss] = useState<boolean>(false);
 
     // Find the boss demon
-    const boss = demons.find(demon => demon.shinzoku_id === dungeon.boss);
+    const boss: DemonModel = dungeon.boss;
 
     // Filter out regular demons (not the boss)
-    const regularDemons = demons.filter(demon => demon.shinzoku_id !== dungeon.boss);
+    const regularDemons = demons.filter(demon => demon !== boss);
 
     // Handle demon click to show details
     const handleDemonClick = (demon: DemonModel, boss: boolean = false) => {
@@ -109,7 +109,7 @@ export default function DungeonDetail({ dungeon, demons, rewardItems, onClose }:
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {regularDemons.map((demon) => (
                                 <div
-                                    key={demon.shinzoku_id}
+                                    key={demon._id}
                                     className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-800/70 transition-colors"
                                     onClick={() => handleDemonClick(demon)}
                                 >

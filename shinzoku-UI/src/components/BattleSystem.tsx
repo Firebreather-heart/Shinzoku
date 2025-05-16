@@ -10,7 +10,8 @@ interface Character {
 
 interface Dungeon {
   name: string;
-  rank: string;
+  rank_name: string;
+  rank: number;
   boss: Character;
   rewards: string[];
 }
@@ -34,7 +35,8 @@ const initialCharacters: Character[] = [
 
 const initialDungeon: Dungeon = {
   name: "The Forbidden Cave",
-  rank: "E",
+  rank_name: "E",
+  rank: 588,
   boss: {
     name: "Cave Boss",
     health: 200,
@@ -61,7 +63,7 @@ const BattleSystem: React.FC = () => {
   const startBattle = () => {
     setBattleInProgress(true);
     setBattleOutcome(null);
-    
+
     // Simulate battle process
     setTimeout(() => {
       const outcome = simulateBattle(selectedSquad, dungeon.boss);
@@ -105,10 +107,27 @@ const BattleSystem: React.FC = () => {
     });
   };
 
+  // Function to get difficulty class based on rank name
+  const getDifficultyClass = (rank_name: string): string => {
+    switch (rank_name) {
+      case 'SSS':
+      case 'SS':
+      case 'S':
+        return 'text-red-500';
+      case 'A':
+        return 'text-yellow-500';
+      case 'B':
+      case 'C':
+        return 'text-blue-500';
+      default:
+        return 'text-green-500';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#1e293b] to-[#0f172a] flex flex-col items-center justify-center text-white">
       <h1 className="text-4xl font-bold text-[#3b82f6] mb-6">Battle System</h1>
-      
+
       <div className="flex gap-4 mb-8">
         <button
           className={`px-6 py-2 rounded-lg ${battleMode === "story" ? "bg-[#3b82f6]" : "bg-[#4b5563]"} text-white`}
@@ -146,7 +165,7 @@ const BattleSystem: React.FC = () => {
             </div>
           ))}
         </div>
-        
+
         <div className="mt-6">
           <h3 className="text-xl font-semibold text-[#fff] mb-4">Dungeon: {dungeon.name}</h3>
           <div className="bg-[#121826] border border-[#3b82f6] rounded-xl p-6">
@@ -156,7 +175,9 @@ const BattleSystem: React.FC = () => {
               className="w-36 h-36 object-cover rounded-lg mb-4 mx-auto"
             />
             <h3 className="text-2xl font-semibold">{dungeon.boss.name}</h3>
-            <p className="text-sm text-gray-400">Boss Rank: {dungeon.rank}</p>
+            <p className="text-sm text-gray-400">
+              Boss Rank: <span className={getDifficultyClass(dungeon.rank_name)}>{dungeon.rank_name}</span>
+            </p>
             <p className="text-sm text-gray-400">Rewards: {dungeon.rewards.join(", ")}</p>
           </div>
         </div>

@@ -32,8 +32,7 @@ const formatCurrencyValue = (value: string | number): string => {
 
 export default function GameInterface() {
   const [activeTab, setActiveTab] = useState<
-    "home" | "inventory" | "shop" | "battle" | "story" | "campaign" | "challenge" | "dashboard"
-  >("home");
+    "home" | "inventory" | "shop" | "battle" | "story" | "campaign" | "challenge">("home");
 
   const playerName = "Warrior_001"; // Original player name
   const playerRank = "Bronze";    // Original player rank
@@ -236,8 +235,6 @@ export default function GameInterface() {
               {activeTab === "shop" && <Shop setActiveTab={setActiveTab} />}
 
               {activeTab === "battle" && <BattleSystem />}
-
-              {activeTab === "dashboard" && <Dashboard />}
             </div>
           )}
         </div>

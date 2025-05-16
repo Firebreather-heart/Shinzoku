@@ -1,7 +1,7 @@
 import { CharacterModel } from "@/types/CharacterModel";
 import { ItemModel } from "@/types/ItemModel";
-import { DemonModel } from "@/types/DemonModel";
-import { DungeonModel } from "@/types/DungeonModel";
+//import { DemonModel } from "@/types/DemonModel";
+import { DungeonModel, DemonModel } from "@/types/DungeonModel";
 
 // API base URL - ensure this is a hardcoded string, not undefined
 const API_BASE_URL = 'https://shinzoku-admin.vercel.app/api';
@@ -117,6 +117,20 @@ export class ShinzokuAPI {
       return await response.json();
     } catch (error) {
       console.error(`Error fetching dungeon ${id}:`, error);
+      return null;
+    }
+  }
+
+  // Get a specific demon by ID
+  static async getDemonById(id: string): Promise<DemonModel | null> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/demons/${id}`, getRequestOptions);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch demon: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(`Error fetching demon ${id}:`, error);
       return null;
     }
   }

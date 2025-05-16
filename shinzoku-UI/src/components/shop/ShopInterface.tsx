@@ -4,8 +4,8 @@ import ItemList from '../items/ItemList';
 import DungeonList from '../dungeons/DungeonList';
 import { CharacterModel } from '@/types/CharacterModel';
 import { ItemModel } from '@/types/ItemModel';
-import { DemonModel } from '@/types/DemonModel';
-import { DungeonModel } from '@/types/DungeonModel';
+// import { DemonModel } from '@/types/DemonModel';
+import { DungeonModel, DemonModel } from '@/types/DungeonModel';
 import { ShinzokuAPI } from '@/services/ShinzokuAPI';
 
 type TabType = 'characters' | 'items' | 'dungeons';

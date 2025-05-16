@@ -1,5 +1,6 @@
 import Image from 'next/image';
-import { DemonModel } from '@/types/DemonModel';
+import { DemonModel } from '@/types/DungeonModel';
+
 
 interface DemonCardProps {
     demon: DemonModel;
@@ -95,8 +96,8 @@ export default function DemonCard({ demon, isBoss = false, onClose }: DemonCardP
                 {/* Close button */}
                 <button
                     className={`w-full py-2 ${isBoss
-                            ? 'bg-red-600 hover:bg-red-700'
-                            : 'bg-[#d3af37] hover:bg-[#c2a030]'
+                        ? 'bg-red-600 hover:bg-red-700'
+                        : 'bg-[#d3af37] hover:bg-[#c2a030]'
                         } text-black font-semibold rounded-lg transition-colors`}
                     onClick={onClose}
                 >

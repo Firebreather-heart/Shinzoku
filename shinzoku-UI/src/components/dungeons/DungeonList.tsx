@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
-import { DungeonModel } from '@/types/DungeonModel';
-import { DemonModel } from '@/types/DemonModel';
+import { DungeonModel, DemonModel } from '@/types/DungeonModel';
+// import { DemonModel } from '@/types/DemonModel';
 import { ItemModel } from '@/types/ItemModel';
 import DungeonDetail from './DungeonDetail';
 
@@ -14,12 +14,21 @@ interface DungeonListProps {
 export default function DungeonList({ dungeons, demons, items }: DungeonListProps) {
     const [selectedDungeon, setSelectedDungeon] = useState<DungeonModel | null>(null);
 
-    // Function to get difficulty class based on rank
-    const getDifficultyClass = (rank: number): string => {
-        if (rank >= 10000) return 'text-red-500';
-        if (rank >= 7000) return 'text-yellow-500';
-        if (rank >= 4000) return 'text-blue-500';
-        return 'text-green-500';
+    // Function to get difficulty class based on rank name
+    const getDifficultyClass = (rank_name: string): string => {
+        switch (rank_name) {
+            case 'SSS':
+            case 'SS':
+            case 'S':
+                return 'text-red-500';
+            case 'A':
+                return 'text-yellow-500';
+            case 'B':
+            case 'C':
+                return 'text-blue-500';
+            default:
+                return 'text-green-500';
+        }
     };
 
     // Function to get difficulty label based on rank
@@ -37,7 +46,7 @@ export default function DungeonList({ dungeons, demons, items }: DungeonListProp
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {dungeons.map((dungeon) => {
                     // Find the boss for this dungeon to display its image/info
-                    const boss = demons.find(demon => demon.shinzoku_id === dungeon.boss);
+                    const boss: DemonModel = dungeon.boss;
 
                     return (
                         <div
@@ -58,8 +67,8 @@ export default function DungeonList({ dungeons, demons, items }: DungeonListProp
                                     <h3 className="text-xl font-bold text-white">{dungeon.name}</h3>
                                     <div className="flex justify-between items-center">
                                         <span className="text-xs text-gray-300">Rank {dungeon.rank_name}</span>
-                                        <span className={`text-xs font-semibold ${getDifficultyClass(dungeon.rank)}`}>
-                                            {getDifficultyLabel(dungeon.rank)}
+                                        <span className={`text-xs font-semibold ${getDifficultyClass(dungeon.rank_name)}`}>
+                                            {dungeon.rank_name}
                                         </span>
                                     </div>
                                 </div>
@@ -108,8 +117,8 @@ export default function DungeonList({ dungeons, demons, items }: DungeonListProp
                 <DungeonDetail
                     dungeon={selectedDungeon}
                     demons={demons.filter(demon =>
-                        demon.shinzoku_id === selectedDungeon.boss ||
-                        selectedDungeon.members.includes(demon.shinzoku_id)
+                        demon._id === selectedDungeon.boss._id ||
+                        selectedDungeon.members.some(member => member._id === demon._id)
                     )}
                     rewardItems={items.filter(item =>
                         selectedDungeon.rewards.items.some(reward => reward.item === item.shinzoku_id)
