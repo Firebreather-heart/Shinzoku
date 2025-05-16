@@ -11,9 +11,6 @@ export default function WalletConnect() {
         <h1 className="text-4xl md:text-5xl font-extrabold text-[#d3af37] drop-shadow-lg">
           Connect Your Solana Wallet
         </h1>
-        <p className="text-[#f5deb3] mt-4 text-lg">
-          Shinzoku warriors await your command.
-        </p>
         <div className="mt-8">
           <WalletButton className="!bg-[#d3af37] !hover:bg-[#ae8625] !text-black !px-8 !py-4 !rounded-lg !text-lg !font-bold !transition-all !duration-300 !shadow-lg !hover:shadow-red-500/50" />
         </div>

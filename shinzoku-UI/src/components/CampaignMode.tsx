@@ -42,7 +42,7 @@ export default function CampaignMode() {
       {/* Content panel with relative positioning to appear above the gradient overlays */}
       <div className="flex-1 relative z-10">
         {activePanel === 'world' && <GameWorldPanel />}
-        {activePanel === 'inventory' && <InventoryPanel />}
+        {activePanel === 'inventory' && <InventoryPanel isOpen={activePanel === 'inventory'} />}
         {activePanel === 'shop' && <ShopPanel />}
       </div>
     </div>

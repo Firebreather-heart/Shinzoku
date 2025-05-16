@@ -204,7 +204,7 @@ export default function CharacterList({ characters }: CharacterListProps) {
     );
 }
 
-// Simple coin icon component
+
 function IconCoin() {
     return (
         <svg

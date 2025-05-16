@@ -6,6 +6,7 @@ import AnimatedHeartLogo from "./AnimatedLogo";
 import CampaignMode from "./campaign/CampaignMode";
 import Shop from './Shop';
 import BattleSystem from './BattleSystem';
+import Inventory from './Inventory';
 
 // Helper function to format currency values
 const formatCurrencyValue = (value: string | number): string => {
@@ -31,7 +32,7 @@ const formatCurrencyValue = (value: string | number): string => {
 
 export default function GameInterface() {
   const [activeTab, setActiveTab] = useState<
-    "home" | "inventory" | "shop" | "battle" | "story" | "campaign" | "challenge"
+    "home" | "inventory" | "shop" | "battle" | "story" | "campaign" | "challenge" | "dashboard"
   >("home");
 
   const playerName = "Warrior_001"; // Original player name
@@ -226,13 +227,17 @@ export default function GameInterface() {
               )}
 
               {activeTab === "inventory" && (
-                // @ts-ignore TODO: fix type later
-                <Inventory setActiveTab={setActiveTab} />
+                <Inventory
+                  setActiveTab={setActiveTab}
+                  isOpen={activeTab === "inventory"}
+                />
               )}
 
               {activeTab === "shop" && <Shop setActiveTab={setActiveTab} />}
 
               {activeTab === "battle" && <BattleSystem />}
+
+              {activeTab === "dashboard" && <Dashboard />}
             </div>
           )}
         </div>

@@ -1,159 +1,178 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNftInventory } from '@/hooks/useNftInventory';
 import Image from 'next/image';
 
-interface InventoryItem {
-  id: number;
-  name: string;
-  description: string;
-  type: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  image: string;
-  level?: number;
-  stats?: {
-    [key: string]: number;
-  };
-  jutsu_name?: string;
+interface InventoryPanelProps {
+  isOpen?: boolean;
 }
 
-export default function InventoryPanel() {
-  const [category, setCategory] = useState<'characters' | 'items'>('characters');
+export default function InventoryPanel({ isOpen = false }: InventoryPanelProps) {
+  const [activeCategory, setActiveCategory] = useState<'characters' | 'items'>('characters');
+  const { characters, items, loading, error, refresh } = useNftInventory(isOpen);
 
-  const characters: InventoryItem[] = [
-    {
-      id: 1,
-      name: "Shadow Warrior",
-      description: "A fierce warrior from the shadow realm",
-      type: "Melee",
-      rarity: "rare",
-      image: "/images/char.png",
-      level: 5,
-      stats: {
-        attack: 75,
-        defense: 60,
-        speed: 45
-      },
-      jutsu_name: "Shadow Strike"
-    },
-    {
-      id: 2,
-      name: "Swift Archer",
-      description: "Master of the bow",
-      type: "Range",
-      rarity: "common",
-      image: "/images/char.png",
-      level: 3,
-      stats: {
-        attack: 65,
-        defense: 40,
-        speed: 80
-      },
-      jutsu_name: "Rapid Fire"
+  useEffect(() => {
+    console.log("InventoryPanel isOpen changed:", isOpen);
+    if (isOpen) {
+      console.log("InventoryPanel is open, should trigger scan");
     }
-  ];
+  }, [isOpen]);
 
-  const items: InventoryItem[] = [
-    {
-      id: 3,
-      name: "Health Potion",
-      description: "Restores 50 HP",
-      type: "Consumable",
-      rarity: "common",
-      image: "/images/item.png"
-    },
-    {
-      id: 4,
-      name: "Power Crystal",
-      description: "+10 Attack",
-      type: "Equipment",
-      rarity: "rare",
-      image: "/images/item.png"
-    }
-  ];
-
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case 'common': return 'text-gray-300';
-      case 'rare': return 'text-blue-400';
-      case 'epic': return 'text-purple-400';
-      case 'legendary': return 'text-yellow-400';
-      default: return 'text-gray-300';
-    }
+  // Function to handle refresh button click
+  const handleRefresh = () => {
+    console.log("Manual refresh requested");
+    refresh();
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Category Tabs */}
-      <div className="flex gap-4 mb-6">
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-[#d3af37]">My NFT Collection</h2>
         <button
-          onClick={() => setCategory('characters')}
-          className={`px-6 py-3 rounded-lg transition-all duration-300 ${category === 'characters'
-            ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
-            : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
-            }`}
+          onClick={handleRefresh}
+          className="py-2 px-4 bg-[#d3af37]/20 hover:bg-[#d3af37]/30 text-[#d3af37] rounded-lg transition-all flex items-center text-sm"
+          disabled={loading}
         >
-          Characters
-        </button>
-        <button
-          onClick={() => setCategory('items')}
-          className={`px-6 py-3 rounded-lg transition-all duration-300 ${category === 'items'
-            ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
-            : 'bg-black/30 text-[#d3af37] hover:bg-[#d3af37]/20 backdrop-blur-sm'
-            }`}
-        >
-          Items
+          {loading ? (
+            <>
+              <span className="inline-block w-3 h-3 border-2 border-[#d3af37] border-t-transparent rounded-full animate-spin mr-2"></span>
+              Scanning...
+            </>
+          ) : (
+            <>Refresh</>
+          )}
         </button>
       </div>
 
-      {/* Inventory Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {(category === 'characters' ? characters : items).map((item) => (
-          <div key={item.id}
-            className="bg-gradient-to-b from-black/40 to-black/20 backdrop-blur-sm rounded-xl p-4 hover:from-[#d3af37]/10 hover:to-black/30 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.2)]"
+      {/* Tab selector */}
+      <div className="flex space-x-4 mb-4">
+        <button
+          className={`py-1 px-4 rounded-lg transition-all text-sm ${activeCategory === 'characters'
+              ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
+              : 'bg-gray-700 text-white'
+            }`}
+          onClick={() => setActiveCategory('characters')}
+        >
+          Characters ({characters.length})
+        </button>
+        <button
+          className={`py-1 px-4 rounded-lg transition-all text-sm ${activeCategory === 'items'
+              ? 'bg-gradient-to-br from-[#d3af37] to-[#b87333] text-black font-bold'
+              : 'bg-gray-700 text-white'
+            }`}
+          onClick={() => setActiveCategory('items')}
+        >
+          Items ({items.length})
+        </button>
+      </div>
+
+      {/* Loading state */}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-8">
+          <div className="w-12 h-12 border-4 border-[#d3af37] border-t-transparent rounded-full animate-spin mb-3"></div>
+          <p className="text-base text-[#d3af37]">Scanning your wallet for Shinzoku NFTs...</p>
+        </div>
+      )}
+
+      {/* Error display */}
+      {error && !loading && (
+        <div className="bg-red-900/50 text-red-300 p-3 rounded-lg mb-4 text-sm">
+          <p className="font-bold">Error scanning wallet</p>
+          <p>{error}</p>
+          <button
+            onClick={handleRefresh}
+            className="mt-2 px-3 py-1 bg-red-800 hover:bg-red-700 text-white rounded text-xs"
           >
-            <div className="aspect-square mb-4 relative overflow-hidden rounded-lg">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-              <Image
-                src={item.image}
-                alt={item.name}
-                width={128}
-                height={128}
-                className="w-full h-full object-top object-contain"
-              />
-              {item.level && (
-                <div className="absolute top-2 right-2 w-8 h-8 rounded-full bg-gradient-to-br from-[#d3af37] to-[#b87333] flex items-center justify-center text-black font-bold shadow-lg">
-                  {item.level}
-                </div>
+            Try Again
+          </button>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!loading && !error &&
+        ((activeCategory === 'characters' && characters.length === 0) ||
+          (activeCategory === 'items' && items.length === 0)) && (
+          <div className="bg-gray-800/50 text-gray-300 p-6 rounded-lg text-center">
+            <div className="w-16 h-16 mx-auto mb-3 opacity-50">
+              {activeCategory === 'characters' ? (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
               )}
             </div>
-            <h3 className="text-xl font-bold text-[#d3af37] mb-1">{item.name}</h3>
-            <p className={`text-sm ${getRarityColor(item.rarity)} mb-2`}>{item.rarity.charAt(0).toUpperCase() + item.rarity.slice(1)} {item.type}</p>
-            <p className="text-gray-400 text-sm mb-4">{item.description}</p>
-
-            {/* Prominent jutsu name for special abilities */}
-            {item.jutsu_name && (
-              <div className="mb-2">
-                <span className="text-lg font-bold text-[#d3af37]">{item.jutsu_name}</span>
-              </div>
-            )}
-
-            {item.stats && (
-              <div className="space-y-2">
-                {Object.entries(item.stats).map(([stat, value]) => (
-                  <div key={stat} className="flex justify-between items-center">
-                    <span className="text-gray-400 capitalize">{stat}</span>
-                    <div className="w-32 h-2 bg-black/40 backdrop-blur-sm rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-[#d3af37] to-[#b87333]"
-                        style={{ width: `${value}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <h3 className="text-lg font-bold text-white mb-2">No {activeCategory} found</h3>
+            <p className="text-gray-400 text-sm">You don't have any Shinzoku {activeCategory} as NFTs in your connected wallet.</p>
           </div>
-        ))}
-      </div>
+        )}
+
+      {/* Character/Item Grid */}
+      {!loading && !error && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          {activeCategory === 'characters'
+            ? characters.map((character) => (
+              <div
+                key={character.shinzoku_id}
+                className="bg-gradient-to-b from-black/40 to-black/20 backdrop-blur-sm rounded-xl p-3 
+                    hover:from-[#d3af37]/10 hover:to-black/30 transition-all duration-300 cursor-pointer
+                    shadow-[0_0_15px_rgba(0,0,0,0.2)]"
+              >
+                <div className="aspect-square mb-2 relative overflow-hidden rounded-lg">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                  <Image
+                    src={character.image_url || "/images/default_character.png"}
+                    alt={character.name}
+                    width={200}
+                    height={200}
+                    className="w-full h-full object-cover object-top"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = '/images/default_character.png';
+                    }}
+                  />
+                  <div className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/60 text-[#d3af37] text-xs">
+                    {character.rank_name || "Unknown"} Rank
+                  </div>
+                </div>
+                <h3 className="text-sm font-bold text-[#d3af37] truncate">{character.name}</h3>
+                <p className="text-xs text-gray-400">{character.rarity || "Common"}</p>
+              </div>
+            ))
+            : items.map((item) => (
+              <div
+                key={item.shinzoku_id}
+                className="bg-gradient-to-b from-black/40 to-black/20 backdrop-blur-sm rounded-xl p-3 
+                    hover:from-[#d3af37]/10 hover:to-black/30 transition-all duration-300 cursor-pointer
+                    shadow-[0_0_15px_rgba(0,0,0,0.2)]"
+              >
+                <div className="aspect-square mb-2 relative overflow-hidden rounded-lg">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                  <Image
+                    src={item.image_url || "/images/default_item.png"}
+                    alt={item.name}
+                    width={200}
+                    height={200}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = '/images/default_item.png';
+                    }}
+                  />
+                  <div className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/60 text-[#d3af37] text-xs">
+                    {item.rank_name || "Unknown"}
+                  </div>
+                </div>
+                <h3 className="text-sm font-bold text-[#d3af37] truncate">{item.name}</h3>
+                <p className="text-xs text-gray-400">{item.rarity || "Common"}</p>
+              </div>
+            ))
+          }
+        </div>
+      )}
     </div>
   );
 }

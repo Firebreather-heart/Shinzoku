@@ -101,19 +101,27 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   {gameIntroSlides[step - 1].text}
                 </h2>
               </div>
-              <button
-                className="mt-6 inline-flex items-center gap-2 px-6 py-3 text-lg md:text-xl bg-[#b87333] hover:bg-[#cd7f32] text-white rounded-lg shadow-lg transition-all duration-300"
-                onClick={() => setStep(step + 1)}
-              >
-                Next
-                <svg
-                  className="w-5 h-5 transform rotate-45"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
+              <div className="mt-6 flex justify-between">
+                <button
+                  className="inline-flex items-center gap-2 px-4 py-2 text-base bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg shadow-lg transition-all duration-300"
+                  onClick={() => setStep(gameIntroSlides.length + 1)}
                 >
-                  <path d="M2 12l20-10v20L2 12z" />
-                </svg>
-              </button>
+                  Skip
+                </button>
+                <button
+                  className="inline-flex items-center gap-2 px-6 py-3 text-lg md:text-xl bg-[#b87333] hover:bg-[#cd7f32] text-white rounded-lg shadow-lg transition-all duration-300"
+                  onClick={() => setStep(step + 1)}
+                >
+                  Next
+                  <svg
+                    className="w-5 h-5 transform rotate-45"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M2 12l20-10v20L2 12z" />
+                  </svg>
+                </button>
+              </div>
             </motion.div>
           )}
 
