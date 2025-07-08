@@ -22,7 +22,7 @@ export default function Inventory({ setActiveTab, isOpen }: InventoryProps) {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-[#d3af37]">My NFT Collection</h2>
+        <h2 className="text-3xl font-bold text-[#d3af37]">My Collection</h2>
         <button
           onClick={handleRefresh}
           className="py-2 px-4 bg-[#d3af37]/20 hover:bg-[#d3af37]/30 text-[#d3af37] rounded-lg transition-all flex items-center"

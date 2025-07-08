@@ -62,7 +62,7 @@ export default function GameWorldPanel() {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Dungeons Section */}
       <div className="bg-gradient-to-b from-black/40 to-black/20 backdrop-blur-sm rounded-xl p-4">
-        <h2 className="text-2xl font-bold text-[#d3af37] mb-4">Available Dungeons</h2>
+        <h2 className="text-2xl font-bold text-[#d3af37] mb-4">Dungeons</h2>
         <div className="space-y-4">
           {dungeons.map((dungeon) => (
             <button

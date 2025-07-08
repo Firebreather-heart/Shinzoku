@@ -1,5 +1,5 @@
 import { ClusterProvider } from "@/components/cluster/cluster-data-access";
-import Header from "@/components/Header"; // <-- Import Header
+import Header from "@/components/Header";
 import { SolanaProvider } from "@/components/solana/solana-provider";
 import { AuthProvider } from "@/context/auth-context";
 import React from "react";

@@ -34,10 +34,10 @@ export default function GameInterface() {
   const [activeTab, setActiveTab] = useState<
     "home" | "inventory" | "shop" | "battle" | "story" | "campaign" | "challenge">("home");
 
-  const playerName = "Warrior_001"; // Original player name
-  const playerRank = "Bronze";    // Original player rank
-  const kino = "3,000";           // Original kino value (string)
-  const gems = 10;                // Original gems value (number)
+  const playerName = "Warrior_001";
+  const playerRank = "Bronze";
+  const kino = "3,000";
+  const gems = 10;
 
   const playerInitial = playerName.charAt(0).toUpperCase();
   const fullPlayerInfo = `${playerName} (${playerRank})`;

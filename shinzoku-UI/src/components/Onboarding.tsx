@@ -74,80 +74,92 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           </div>
         )}
 
-        <AnimatePresence mode="wait">
-          {step > 0 && step <= gameIntroSlides.length && (
-            <motion.div
-              key={`slide-${step}`}
-              variants={slideVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={{ duration: 0.5 }}
-              className="animate-fade-in"
-            >
-              {/* Image container */}
-              <div className="relative mb-4 mx-auto">
-                <Image
-                  src={gameIntroSlides[step - 1].image}
-                  alt={`Slide ${step}`}
-                  width={400}
-                  height={300}
-                  className="rounded-md shadow-md w-full filter brightness-75 mx-auto"
-                />
-              </div>
-              {/* Text container below the image */}
-              <div className="px-4 py-2">
-                <h2 className="text-xl md:text-2xl font-semibold">
-                  {gameIntroSlides[step - 1].text}
-                </h2>
-              </div>
-              <div className="mt-6 flex justify-between">
-                <button
-                  className="inline-flex items-center gap-2 px-4 py-2 text-base bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg shadow-lg transition-all duration-300"
-                  onClick={() => setStep(gameIntroSlides.length + 1)}
-                >
-                  Skip
-                </button>
-                <button
-                  className="inline-flex items-center gap-2 px-6 py-3 text-lg md:text-xl bg-[#b87333] hover:bg-[#cd7f32] text-white rounded-lg shadow-lg transition-all duration-300"
-                  onClick={() => setStep(step + 1)}
-                >
-                  Next
-                  <svg
-                    className="w-5 h-5 transform rotate-45"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
+        {step > 0 && (
+          <>
+            <div className="relative h-[500px] overflow-hidden">
+              <AnimatePresence mode="wait">
+                {step <= gameIntroSlides.length && (
+                  <motion.div
+                    key={`slide-${step}`}
+                    variants={slideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    transition={{ duration: 0.5 }}
+                    className="absolute inset-0 flex flex-col items-center justify-center text-center"
                   >
-                    <path d="M2 12l20-10v20L2 12z" />
-                  </svg>
-                </button>
-              </div>
-            </motion.div>
-          )}
+                    <div className="relative mb-4 mx-auto">
+                      <Image
+                        src={gameIntroSlides[step - 1].image}
+                        alt={`Slide ${step}`}
+                        width={400}
+                        height={300}
+                        priority
+                        className="rounded-md shadow-md w-full filter brightness-75 mx-auto"
+                      />
+                    </div>
+                    <h2 className="text-[clamp(1rem,2vw,1.5rem)] leading-snug break-words text-wrap">
+                      {gameIntroSlides[step - 1].text}
+                    </h2>
+                  </motion.div>
+                )}
 
-          {step > gameIntroSlides.length && (
-            <motion.div
-              key="welcome-slide"
-              variants={slideVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={{ duration: 0.5 }}
-              className="animate-fade-in"
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-[#d3af37]">
-                Welcome, {playerName}!
-              </h2>
-              <p className="mt-4 text-lg md:text-xl text-gray-400">Your adventure starts now.</p>
-              <button
-                className="mt-8 px-8 py-4 text-2xl md:text-xl bg-gradient-to-r from-[#b87333] to-[#cd7f32] hover:from-[#cd7f32] hover:to-[#b87333] rounded-lg shadow-xl transition-all duration-300"
-                onClick={onComplete}
-              >
-                Start Game
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                {step > gameIntroSlides.length && (
+                  <motion.div
+                    key="welcome-slide"
+                    variants={slideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    transition={{ duration: 0.5 }}
+                    className="absolute inset-0 flex flex-col items-center justify-center text-center"
+                  >
+                    <h2 className="text-3xl md:text-4xl font-bold text-[#d3af37]">
+                      Welcome, {playerName}!
+                    </h2>
+                    <p className="mt-4 text-lg md:text-xl text-gray-400">
+                      Your adventure starts now.
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="mt-6 flex justify-between w-full px-4">
+              {step <= gameIntroSlides.length ? (
+                <>
+                  <button
+                    className="inline-flex items-center gap-2 px-4 py-2 text-base bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg shadow-lg transition-all duration-300"
+                    onClick={() => setStep(gameIntroSlides.length + 1)}
+                  >
+                    Skip
+                  </button>
+                  <button
+                    className="inline-flex items-center gap-2 px-6 py-3 text-lg md:text-xl bg-[#b87333] hover:bg-[#cd7f32] text-white rounded-lg shadow-lg transition-all duration-300"
+                    onClick={() => setStep(step + 1)}
+                  >
+                    Next
+                    <svg
+                      className="w-5 h-5 transform rotate-45"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M2 12l20-10v20L2 12z" />
+                    </svg>
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="mx-auto mt-8 px-8 py-4 text-2xl md:text-xl bg-gradient-to-r from-[#b87333] to-[#cd7f32] hover:from-[#cd7f32] hover:to-[#b87333] rounded-lg shadow-xl transition-all duration-300"
+                  onClick={onComplete}
+                >
+                  Start Game
+                </button>
+              )}
+            </div>
+          </>
+        )}
+
       </div>
     </div>
   );

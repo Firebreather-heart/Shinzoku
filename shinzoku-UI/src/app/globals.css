@@ -128,3 +128,20 @@ textarea {
     padding-right: min(0.5rem, env(safe-area-inset-right));
   }
 }
+
+/* preloader */
+@keyframes glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 4px #d3af37, 0 0 8px #d3af37, 0 0 12px #d3af37;
+  }
+
+  50% {
+    box-shadow: 0 0 6px #d3af37, 0 0 14px #d3af37, 0 0 20px #d3af37;
+  }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
